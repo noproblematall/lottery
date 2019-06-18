@@ -1,0 +1,36 @@
+.display-none {
+    display: none;
+}
+
+.display-show {
+    display: block;
+}
+
+.border-red{
+    border:1px solid red;
+}
+
+.require-field{
+    color: red;
+    font-weight: bolder;
+}
+
+.avatar-icon-xl .avatar-icon {
+    width: 100px;
+    height: 100px;
+}
+
+.loader_container {
+    position: fixed;
+    background: rgba(0,0,0,0.2);
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    z-index: 1000;
+}
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
