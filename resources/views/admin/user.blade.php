@@ -168,7 +168,7 @@
                         </div>
     
                         <div class="form-group">
-                            <label for="password">Password <span class="require-field">*</span></label>
+                            <label for="password">Password <span class="require-field">*</span>(default: 12345678)</label>
                             <input type="password" class="form-control" id="password" name="password" value="12345678" placeholder="Password" required/>
                             <em id="password-require-error" class="error invalid-feedback">Please enter your password</em>
                             <em id="password-length-error" class="error invalid-feedback">Your password must be at least 8 characters long</em>
