@@ -188,6 +188,12 @@
                                     USER MANAGEMENT
                                 </a>                                    
                             </li>
+                            <li>
+                                <a href="{{route('admin.win_number')}}">
+                                    <i class="metismenu-icon pe-7s-medal"></i>
+                                    WINNING NUMBERS
+                                </a>                                    
+                            </li>
                             
                         </ul>
                     </div>

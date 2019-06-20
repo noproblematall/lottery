@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Models\Lottery;
+use App\Models\WinNumber;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -191,5 +193,48 @@ class AdminController extends Controller
         User::find($id)->update([
             'status' => $status,
         ]);
+    }
+
+    public function win_number()
+    {
+        $date = WinNumber::latest('date')->first()->date;
+        $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
+        $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
+        return view('admin.winnumber',compact('win_data','date_array'));
+    }
+
+    public function add_win(Request $request)
+    {
+        $lottery_id = $request->get('lottery_id');
+        $date = $request->get('date');
+        $value = $request->get('value');
+        $i = $request->get('i');
+        $length = $request->get('length');
+        $exist = WinNumber::where([['date',$date],['lottery_id',$lottery_id]])->count();
+        if($exist > 0){
+            WinNumber::where([['date',$date],['lottery_id',$lottery_id]])->update([
+                'value' => $value,
+            ]);
+            if($i == $length-1){
+                return 0;
+            }
+        }else{
+            WinNumber::create([
+                'date' => $date,
+                'value' => $value,
+                'lottery_id' => $lottery_id,
+            ]);
+            if($i == $length-1){
+                return 1;
+            }
+        }
+    }
+
+    public function win_search(Request $request)
+    {
+        $date = $request->get('date');
+        $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
+        $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
+        return view('admin.winnumber',compact('win_data','date_array','date'));
     }
 }

@@ -28,6 +28,9 @@ Route::post('admin/user-save', 'AdminController@user_save')->name('admin.user_sa
 Route::get('admin/setting', 'AdminController@setting')->name('setting');
 Route::post('admin/setting','AdminController@admin_setting')->name('admin_setting');
 Route::get('admin/user-block','AdminController@user_block')->name('user_block');
+Route::get('admin/win-number','AdminController@win_number')->name('admin.win_number');
+Route::get('admin/add-win','AdminController@add_win')->name('admin.add_win');
+Route::post('admin/win-search','AdminController@win_search')->name('admin.win_search');
 // Route::group([
 //     'middleware' => 'super',
 //     'prefix' => 'admin'
