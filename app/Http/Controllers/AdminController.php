@@ -197,10 +197,15 @@ class AdminController extends Controller
 
     public function win_number()
     {
-        $date = WinNumber::latest('date')->first()->date;
-        $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
-        $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
-        return view('admin.winnumber',compact('win_data','date_array'));
+        if(WinNumber::get()->isNotEmpty()){
+            $date = WinNumber::latest('date')->first()->date;
+            $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
+            $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
+            return view('admin.winnumber',compact('win_data','date_array'));
+        }else{
+            return view('admin.winnumber');
+        }
+        
     }
 
     public function add_win(Request $request)
