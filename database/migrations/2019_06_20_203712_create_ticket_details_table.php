@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLotteriesTable extends Migration
+class CreateTicketDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateLotteriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lotteries', function (Blueprint $table) {
+        Schema::create('ticket_details', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->nullable();
-            $table->string('abbrev')->nullable();
+            $table->integer('ticket_id');
+            $table->integer('number');
+            $table->integer('amount');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateLotteriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lotteries');
+        Schema::dropIfExists('ticket_details');
     }
 }

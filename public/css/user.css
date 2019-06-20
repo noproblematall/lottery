@@ -1,0 +1,149 @@
+body {
+    background: #232830;
+    color: black;
+}
+@media (min-width: 1200px){
+    .custom_container {
+        max-width: 1500px;
+    }
+}
+.custom_container {
+    background: url('../images/bolas.png') left bottom no-repeat,url('../images/bolas.png') right bottom no-repeat;
+}
+ul.lottery {
+    padding:0;
+}
+ul.lottery li{
+    list-style-type: none;
+    display: inline;
+    padding:5px;
+    font-weight: bold;
+    border:2px solid green;
+}
+ul.lottery li:hover{
+    opacity:1;
+    box-shadow: 0 0 4px white;
+    cursor: pointer;
+}
+.lottery_active{
+    opacity:1;
+    box-shadow: 0 0 8px white;
+}
+.lottery_disable{
+    opacity: 0.4;
+}
+#footer ul {
+    padding: 0;
+    margin: 0 auto;
+}
+#footer ul li{
+    list-style-type: none;
+    display:inline-block;
+    padding:10px;
+
+}
+#footer ul li a{
+    color: white;
+}
+ul.lottery li:nth-child(1){
+    background: #EE2020;
+}
+ul.lottery li:nth-child(2){
+    background: #4B30D5;
+}
+ul.lottery li:nth-child(3){
+    background: #D52121;
+}
+ul.lottery li:nth-child(4){
+    background: #2E14B1;
+}
+ul.lottery li:nth-child(5){
+    background: #A9C80D;
+}
+ul.lottery li:nth-child(6){
+    background: #229CB1;
+}
+ul.lottery li:nth-child(7){
+    background: #C5AC0B;
+}
+ul.lottery li:nth-child(8){
+    background: #E40852;
+}
+ul.lottery li:nth-child(9){
+    background: #B5C817;
+}
+ul.lottery li:nth-child(10){
+    background: #17CD18;
+}
+
+.custom-switch{
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+}
+.custom-switch + input {
+    width:50%;
+    display: inline-block;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #c3c6c9;
+    opacity: 1;
+}
+label{
+    color:white;
+}
+
+.ticket-info-container {
+    border: 2px solid gray;
+    border-radius: 0;
+    font-size: 16px;
+    background: #FFFFFF;
+    font-weight: 500;
+    /* min-width: 220px; */
+    margin: 0 5px;
+    display: inline-block;
+}
+.header h5,.lottery-table-footer h5{
+    margin:4px auto;
+}
+.ticket-info-container .header {
+    background: linear-gradient(to top, #53a6ab, #05052a);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+.ticket-info-container .ticket-table {
+    min-height: 50px;
+    margin: 0;
+}
+.lottery-table-footer {
+    background: linear-gradient(to top, #53a6ab, #34424a);
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.table > thead > tr {
+    color: #707070;
+    font-weight: normal;
+    background: #F2F2F2;
+    background-image: -webkit-linear-gradient(top, #f8f8f8 0%, #ececec 100%);
+    background-image: -o-linear-gradient(top, #f8f8f8 0%, #ececec 100%);
+    background-image: linear-gradient(to bottom, #f8f8f8 0%, #ececec 100%);
+    background-repeat: repeat-x;
+}
+.table.table-bordered > thead > tr > th:first-child {
+    border-left-color: #dddddd;
+}
+
+hr {
+    border-top: 1px solid rgba(148, 137, 137, 0.51);
+}
+@media only screen and (max-width: 1220px) {
+    ul.lottery li {
+        display: block;
+        margin-top:2px;
+    }
+    
+}

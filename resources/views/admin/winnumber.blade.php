@@ -142,19 +142,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">NYA1:&nbsp;&nbsp;</span></label>
+                        <label for="name">NY AM:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="1" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">NY AM:&nbsp;&nbsp;</span></label>
+                        <label for="name">FL AM:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="2" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">SP AM:&nbsp;&nbsp;</span></label>
+                        <label for="name">GAMS:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="3" user_id="" name="" required autocomplete="off"/>
                         </div>
@@ -166,27 +166,39 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">NJ AM:&nbsp;&nbsp;</span></label>
+                        <label for="name">P2AM:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="5" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">P2AM:&nbsp;&nbsp;</span></label>
+                        <label for="name">NY PM:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="6" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">FL AM:&nbsp;&nbsp;</span></label>
+                        <label for="name">LN:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="7" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="name">FAFO:&nbsp;&nbsp;</span></label>
+                        <label for="name">FL PM:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="text" class="form-control" id="8" user_id="" name="" required autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">GA PM:&nbsp;&nbsp;</span></label>
+                        <div class="float-right">
+                            <input type="text" class="form-control" id="9" user_id="" name="" required autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">P2PM:&nbsp;&nbsp;</span></label>
+                        <div class="float-right">
+                            <input type="text" class="form-control" id="10" user_id="" name="" required autocomplete="off"/>
                         </div>
                     </div>
                 </div>
