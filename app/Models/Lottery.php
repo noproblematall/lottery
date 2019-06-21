@@ -14,4 +14,14 @@ class Lottery extends Model
     {
         return $this->hasMany('App\Models\WinNumber');
     }
+
+    public function details()
+    {
+        return $this->hasMany('App\Models\TicketDetail');
+    }
+
+    public function prices()
+    {
+        return $this->hasMany('App\Models\Price');
+    }
 }

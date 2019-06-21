@@ -17,7 +17,7 @@ class CreatePricesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('lottery_id');
             $table->integer('game_id');
-            $table->integer('price');
+            $table->integer('price')->nullable();
             $table->date('date');
             $table->timestamps();
         });

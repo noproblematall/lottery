@@ -31,6 +31,9 @@ Route::get('admin/user-block','AdminController@user_block')->name('user_block');
 Route::get('admin/win-number','AdminController@win_number')->name('admin.win_number');
 Route::get('admin/add-win','AdminController@add_win')->name('admin.add_win');
 Route::post('admin/win-search','AdminController@win_search')->name('admin.win_search');
+Route::get('admin/avail-amount','AdminController@avail_amount')->name('admin.avail_amount');
+Route::get('admin/add-amount','AdminController@add_amount')->name('admin.add_amount');
+
 // Route::group([
 //     'middleware' => 'super',
 //     'prefix' => 'admin'
@@ -41,6 +44,7 @@ Route::post('admin/win-search','AdminController@win_search')->name('admin.win_se
 
 // User
 Route::get('/', 'HomeController@index')->name('home');
-
+Route::get('check-avail','HomeController@check_avail')->name('check_avail');
+Route::get('create-ticket','HomeController@create_ticket')->name('create_ticket');
 
 

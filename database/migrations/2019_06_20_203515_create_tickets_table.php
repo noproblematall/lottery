@@ -16,11 +16,9 @@ class CreateTicketsTable extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->integer('ticket_number');
-            $table->integer('lottery_id');
-            $table->integer('game_id');
             $table->timestamps();
         });
+        DB::statement("ALTER TABLE tickets AUTO_INCREMENT = 100000;");
     }
 
     /**

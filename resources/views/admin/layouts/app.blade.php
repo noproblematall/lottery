@@ -194,6 +194,12 @@
                                     WINNING NUMBERS
                                 </a>                                    
                             </li>
+                            <li>
+                                <a href="{{route('admin.avail_amount')}}">
+                                    <i class="metismenu-icon pe-7s-diamond"></i>
+                                    AVAILABLE AMOUNTS
+                                </a>                                    
+                            </li>
                             
                         </ul>
                     </div>

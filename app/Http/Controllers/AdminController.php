@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Models\Lottery;
 use App\Models\WinNumber;
+use App\Models\Game;
+use App\Models\Price;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -241,5 +243,39 @@ class AdminController extends Controller
         $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
         $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
         return view('admin.winnumber',compact('win_data','date_array','date'));
+    }
+
+    public function avail_amount()
+    {
+        $game = Game::get();
+        $lottery = Lottery::get();
+        if(!Price::get()->isEmpty()){
+            $date = Price::latest('date')->first()->date;
+            $price_data = Price::whereDate('date', $date)->orderBy('lottery_id','desc')->orderBy('game_id','asc')->get();
+            return view('admin.avail_amount',compact('price_data','game','lottery','date'));
+        }
+        return view('admin.avail_amount',compact('game','lottery'));
+    }
+
+    public function add_amount(Request $request)
+    {
+        $lottery_id = $request->get('lottery_id');
+        $game_id = $request->get('game_id');
+        $date = $request->get('date');
+        $price = $request->get('price');
+        $exist = Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->count();
+        if($exist > 0){
+            Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->update([
+                'price' => $price
+            ]);
+        }else{
+            Price::create([
+                'lottery_id' => $lottery_id,
+                'game_id' => $game_id,
+                'price' => $price,
+                'date' => $date,
+            ]);
+        }
+        
     }
 }

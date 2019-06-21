@@ -12,13 +12,13 @@ class GameSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name' => 'Directo']);
-        Role::create(['name' => 'Pale']);
-        Role::create(['name' => 'Tripleta']);
-        Role::create(['name' => 'Cash 3 Straight']);
-        Role::create(['name' => 'Cash 3 Box']);
-        Role::create(['name' => '4 Straight']);
-        Role::create(['name' => '4 Box']);
-        Role::create(['name' => 'Super Pale']);
+        Game::create(['name' => 'Directo']);
+        Game::create(['name' => 'Pale']);
+        Game::create(['name' => 'Tripleta']);
+        Game::create(['name' => 'Cash 3 Straight']);
+        Game::create(['name' => 'Cash 3 Box']);
+        Game::create(['name' => '4 Straight']);
+        Game::create(['name' => '4 Box']);
+        Game::create(['name' => 'Super Pale']);
     }
 }

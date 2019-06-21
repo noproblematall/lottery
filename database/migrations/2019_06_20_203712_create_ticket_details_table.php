@@ -16,6 +16,9 @@ class CreateTicketDetailsTable extends Migration
         Schema::create('ticket_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('ticket_id');
+            $table->integer('game_id');
+            $table->integer('lottery_id');
+            // $table->integer('price_id');
             $table->integer('number');
             $table->integer('amount');
             $table->timestamps();

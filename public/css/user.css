@@ -2,6 +2,10 @@ body {
     background: #232830;
     color: black;
 }
+
+.display-none {
+    display: none;
+}
 @media (min-width: 1200px){
     .custom_container {
         max-width: 1500px;
@@ -99,7 +103,7 @@ label{
     font-size: 16px;
     background: #FFFFFF;
     font-weight: 500;
-    /* min-width: 220px; */
+    width: 100%;
     margin: 0 5px;
     display: inline-block;
 }
@@ -139,6 +143,10 @@ label{
 
 hr {
     border-top: 1px solid rgba(148, 137, 137, 0.51);
+}
+
+.remove_this{
+    cursor: pointer;
 }
 @media only screen and (max-width: 1220px) {
     ul.lottery li {
