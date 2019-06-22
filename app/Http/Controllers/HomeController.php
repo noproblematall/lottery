@@ -33,14 +33,25 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $user_id = Auth::user()->id;
         $lottery = Lottery::get();
         if(WinNumber::get()->isNotEmpty()){
             $date = WinNumber::latest('date')->first()->date;
             $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
             $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
-            return view('home',compact('win_data','date','lottery'));
+            if(Ticket::find($user_id)->get()->isNotEmpty()){
+                $tickets = Ticket::find($user_id)->get();
+                return view('home',compact('win_data','date','lottery','tickets'));
+            }else{
+                return view('home',compact('win_data','date','lottery'));
+            }            
         }else{
-            return view('home',compact('lottery'));
+            if(Ticket::find($user_id)->get()->isNotEmpty()){
+                $tickets = Ticket::find($user_id)->get();
+                return view('home',compact('lottery','tickets'));
+            }else{
+                return view('home',compact('lottery'));
+            }
         }
     }
 
@@ -50,7 +61,10 @@ class HomeController extends Controller
         $lottery_id = $request->get('lottery_id');
         $game_id = $request->get('game_id');
         $play = $request->get('play');
-        $date = date('2019-06-23');
+        $date = date('2019-6-23');
+        if(Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->get()->isEmpty()){
+            return 'fail';
+        }
         $price = Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->first()->price;
         if($price != NULL){
             $tickets = Ticket::whereDate('created_at', $date)->where('user_id',$user_id)->get();

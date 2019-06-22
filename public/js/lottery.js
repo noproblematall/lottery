@@ -176,6 +176,7 @@ $(document).ready(function () {
     $("#create_ticket").click(function () {
         
         var post_data = {};
+        var print_data = [];
         var t_tr = $('.table_row').find('tbody tr');
         for (let i = 0; i < t_tr.length; i++) {
             var txt = "";
@@ -185,6 +186,7 @@ $(document).ready(function () {
 
             }
             post_data[i] = txt;            
+            print_data.push(txt);            
         }
         // console.log(post_data.length)
         // if(post_data.length == 0 || post_data.length == undefined){
@@ -207,6 +209,8 @@ $(document).ready(function () {
                     $('.print-container div.ticket-info p:first span').text(date);
                     $('.total_display span').text(total_amount);
 
+                    draw_table();
+
                     printJS({
                         printable: 'ticket_result',
                         type: 'html',
@@ -226,6 +230,58 @@ $(document).ready(function () {
                 }
             }
         })
+
+        function draw_table(){
+            
+
+            for(let i=1;i<=10;i++){
+                var cl = $('.clone').clone().removeClass('clone');
+                var temp = 0;
+                var key = 0;
+                var txt = "";
+                for(let j=0;j<print_data.length;j++){
+                    
+                    var row_data = print_data[j].split(',');
+                    if(row_data[0] == i){
+                        if(temp == 0){
+                            temp = 1;
+                            cl.css('display','block');
+                            cl.attr('id', 'item-'+i);
+                            cl.find(".table_title").first().text($('.lottery li[id='+i+']').text())
+                            $('.ticket-detail').append(cl);
+                            if(key == 0){
+                                txt+="<tr>";
+                            }
+                            key++;
+                            if(key == 3){
+                                txt+="</tr><tr>";
+                                key=1;
+                            }
+                            txt+="<td>"+row_data[2]+"</td>";
+                            txt+="<td>"+row_data[3]+"</td>";
+                            
+                        } else {
+                            if(key == 0){
+                                txt+="<tr>";
+                            }
+                            key++;
+                            if(key == 3){
+                                txt+="</tr><tr>";
+                                key=1;
+                            }
+                            txt+="<td>"+row_data[2]+"</td>";
+                            txt+="<td>"+row_data[3]+"</td>";
+                            
+                        }
+                        
+                    }
+                }
+                if(temp == 1){
+                    txt += "</tr>";
+                    $('#item-'+i+' tbody').append(txt);
+                }
+            }
+        }
 
     })
 

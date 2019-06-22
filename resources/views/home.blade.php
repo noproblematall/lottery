@@ -69,6 +69,15 @@
                     <label for="usr">My Tickets:</label>
                 <div class="input-group mb-3">
                     <select name="tickets" id="tickets">
+                        @isset($tickets)
+                            @foreach ($tickets as $ticket)
+                                @php
+                                    $price = $ticket->details()->sum('amount');
+                                    $temp = $ticket->id.' - '.'$'.$price;
+                                @endphp
+                                <option value="">{{$temp}}</option>
+                            @endforeach
+                        @endisset
                     </select>
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="button"><i class="fa fa-files-o"></i></button> 
@@ -325,9 +334,9 @@
                 </div>
                 <div class="col-md-12 text-center">
                     <div class="ticket-detail text-center">
-                        <div>
+                        <div class="clone" style="display:none;">
                             <p style="font-weight:bolder">------------------------------------------------</p>
-                            <p>FLORIDA AM : 1.00</p>
+                            <p class="table_title"></p>
                             <p style="font-weight:bolder">------------------------------------------------</p>
                             <table class="text-center" style="margin-left:210px;">
                                 <thead>
@@ -339,12 +348,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>12</td>
-                                        <td>1</td>
-                                        <td>22</td>
-                                        <td>10</td>
-                                    </tr>
+                                   
                                 </tbody>
                             </table>
                         </div>                        
