@@ -48,3 +48,8 @@ Route::get('check-avail','HomeController@check_avail')->name('check_avail');
 Route::get('create-ticket','HomeController@create_ticket')->name('create_ticket');
 
 
+Route::get('print',function(){
+    return view('print');
+});
+
+

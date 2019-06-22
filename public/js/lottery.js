@@ -52,21 +52,24 @@ $(document).ready(function () {
         if (play.indexOf('+') >= 0 || play.indexOf('-') >= 0) {
             if (play.indexOf('+') == 4) {
                 game_id = 7;
-                filter_play = play.substr(0,3);
+                filter_play = play.substr(0,4);
                 play = filter_play + 'B';
+                
                 check_avail(lottery_id, game_id, filter_play);
                 return
             }
             if (play.indexOf('+') == 3) {
                 game_id = 5;
-                filter_play = play.substr(0,2);
+                filter_play = play.substr(0,3);
                 play = filter_play + 'B';
+                console.log(filter_play);
+                console.log(play);
                 check_avail(lottery_id, game_id, filter_play);
                 return
             }
             if (play.indexOf('-') == 4) {
                 game_id = 6;
-                filter_play = play.substr(0,3);
+                filter_play = play.substr(0,4);
                 play = filter_play + 'S';
                 check_avail(lottery_id, game_id, filter_play);
                 return
@@ -112,7 +115,6 @@ $(document).ready(function () {
                 $('#warning').removeClass('display-none');
                 $(this).focusout();
                 $('#myplay1').focus();
-                console.log(234);
                 setTimeout(function () {
                     $('#warning').addClass('display-none');
                 }, 2000);
@@ -172,6 +174,7 @@ $(document).ready(function () {
     })
 
     $("#create_ticket").click(function () {
+        
         var post_data = {};
         var t_tr = $('.table_row').find('tbody tr');
         for (let i = 0; i < t_tr.length; i++) {
@@ -181,9 +184,12 @@ $(document).ready(function () {
                 txt += $(t_td[j]).attr('name') + ",";
 
             }
-            post_data[i] = txt
-            
+            post_data[i] = txt;            
         }
+        // console.log(post_data.length)
+        // if(post_data.length == 0 || post_data.length == undefined){
+        //     return false;
+        // }
         $.ajax({
             url:'/create-ticket',
             data:post_data,
@@ -196,6 +202,18 @@ $(document).ready(function () {
                     var display_ticket = ticket_id + ' - ' + '$'+total_amount;
                     var html = `<option value="${ticket_id}">${display_ticket}</option>`
                     $('#tickets').prepend(html);
+
+                    $('.print-container div.logo-text p').text(date);
+                    $('.print-container div.ticket-info p:first span').text(date);
+                    $('.total_display span').text(total_amount);
+
+                    printJS({
+                        printable: 'ticket_result',
+                        type: 'html',
+                        targetStyles: ['*'],
+                        documentTitle:'Winning Numbers'
+                    })
+
                     $('#playsTableBodyDirecto').empty();
                     $('#playsTableBodyPale').empty();
                     $('#playsTableBodyCash').empty();

@@ -229,7 +229,7 @@
         <div class="modal-dialog" >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Add Winning Numbers</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Winning Numbers</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -276,19 +276,97 @@
         </div>
     </div>
 @endsection
-{{-- <div id="my_id">
-    <table>
-        <tbody>
-            <tr>
-                <td>1234</td>
-                <td>1234</td>
-                <td>1234</td>
-                <td>1234</td>
-                <td>1234</td>
-            </tr>
-        </tbody>
-    </table>
-</div> --}}
+
+<div class="wrap-print" style="display:none;">
+        <div  id="ticket_result">
+                <style>
+                        .print-container {
+                            background: white;
+                            padding:40px;
+                        }
+                        .logo-text{
+                            margin:10px auto;
+                        }
+                        p {
+                            margin-bottom: 5px;
+                        }
+                        table thead tr th, table tbody tr td{
+                            padding-left: 10px;
+                            padding-right: 10px;
+                        }
+                        .ticket-detail table tbody tr td{
+                            text-align: left;
+                        }
+                        .general-info p,.ticket-detail p,.ticket-info p{
+                            font-style: italic;
+                            margin-bottom: 5px;
+                        }
+                    </style>
+        
+        <div class="container print-container" style="margin:0;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="logo-text text-center">
+                        <h1 style="font-weight: bold;">Kaizer & Assoc</h1>
+                        <h1>**&nbsp;&nbsp; ORIGINAL &nbsp;&nbsp;**</h1>
+                        <p>06/14/2019 01 : 24 PM</p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="ticket-info">
+                        <p>Ticket: <span>001 - 280 - 014030856</span></p>
+                        <p>Fecha: <span>06/14/2019 01 : 24 PM</span></p>
+                        <p>2BCC2C307D316B5D3D71032B957E7E93</p>
+                        <h3>573843071605</h3>
+                    </div>
+                </div>
+                <div class="col-md-12 text-center">
+                    <div class="ticket-detail text-center">
+                        <div>
+                            <p style="font-weight:bolder">------------------------------------------------</p>
+                            <p>FLORIDA AM : 1.00</p>
+                            <p style="font-weight:bolder">------------------------------------------------</p>
+                            <table class="text-center" style="margin-left:210px;">
+                                <thead>
+                                    <tr>
+                                        <th>JUGADA</th>
+                                        <th>MONTO</th>
+                                        <th>JUGADA</th>
+                                        <th>MONTO</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>12</td>
+                                        <td>1</td>
+                                        <td>22</td>
+                                        <td>10</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>                        
+                    </div>
+                    <h2 class="total_display">-- <span>TOTAL : 1.00</span> --</h2>
+                </div>
+                <div class="col-md-12">
+                    <div class="general-info text-center">
+                        <p>1st:$65(00-99):$60 2nd:$15</p>
+                        <p>3rd:$10 First Only and Pick2:$80</p>
+                        <p>Pale:$1,000 SuperPale:$2,000</p>
+                        <p>Cash3:$700(000-999:$500)</p>
+                        <p>Play4:$4,000 Pick5:$40,000</p>
+                        <p>Kole3:$10,000</p>
+                        <p>NO TICKET NO MONEY . WE DON'T P A Y</p>
+                        <p>DOUBLE P ALE.</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+    </div>
+
 @section('script')
 <script src="{{asset('js/print.js')}}"></script>
     <script>
