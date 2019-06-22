@@ -205,8 +205,11 @@
                 <li><a href="#">Pagar</a></li>
                 <li><a id="create_ticket" href="javascript:void(0);">Crear ticket</a></li>
                 <li><a href="#">Ayuda</a></li>
-                <li><a href="#">Salir</a></li>
+                <li><a href="javascript:void(0);" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Salir</a></li>
             </ul>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </div>        
     </div>
 </div>
