@@ -173,6 +173,12 @@ $(document).ready(function () {
         $(this).parent().parent().remove();
     })
 
+    $('body').on('keyup', function(e){
+        if(e.keyCode == 106){
+            $("#create_ticket").click();
+        }
+    })
+
     $("#create_ticket").click(function () {
         
         var post_data = {};
