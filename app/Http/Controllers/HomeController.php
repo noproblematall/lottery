@@ -39,7 +39,7 @@ class HomeController extends Controller
             $date = WinNumber::latest('date')->first()->date;
             $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
             $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
-            if(Ticket::find($user_id)->isNotEmpty()){
+            if(Ticket::get()->isNotEmpty()){
                 $tickets = Ticket::find($user_id)->get();
                 return view('home',compact('win_data','date','lottery','tickets'));
             }else{
