@@ -61,7 +61,7 @@ class HomeController extends Controller
         $lottery_id = $request->get('lottery_id');
         $game_id = $request->get('game_id');
         $play = $request->get('play');
-        $date = date();
+        $date = date('Y-m-d');
         if(Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->get()->isEmpty()){
             return 'fail';
         }
