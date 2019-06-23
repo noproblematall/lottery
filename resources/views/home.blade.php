@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="winning_number float-right" style="margin-right:10px;color:wheat;">
-    <h5>12 : 55 : 33 : PM</h5>
+    <h5 id="clock"></h5>
 </div>
 <div class="container custom_container">
     <div class="row">
@@ -75,13 +75,13 @@
                                     $price = $ticket->details()->sum('amount');
                                     $temp = $ticket->id.' - '.'$'.$price;
                                 @endphp
-                                <option value="">{{$temp}}</option>
+                                <option value="{{$ticket->id}}">{{$temp}}</option>
                             @endforeach
                         @endisset
                     </select>
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button"><i class="fa fa-files-o"></i></button> 
-                        <button class="btn btn-danger" type="button"><i class="fa fa-times"></i></button> 
+                        <button class="btn btn-primary" id="ticket_copy" type="button"><i class="fa fa-files-o"></i></button>
+                        <button class="btn btn-danger" id="ticket_delete" type="button"><i class="fa fa-times"></i></button> 
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@
                         </table>
                     </div>
                     <div class="row lottery-table-footer">
-                        <h5>Total: <span class="table-total">$0.00</span></h5>
+                        <h5>Total: $<span class="table_total1">0</span></h5>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
                         </table>
                     </div>
                     <div class="row lottery-table-footer">
-                        <h5>Total: <span class="table-total">$0.00</span></h5>
+                        <h5>Total: $<span class="table_total2">0</span></h5>
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                         </table>
                     </div>
                     <div class="row lottery-table-footer">
-                        <h5>Total: <span class="table-total">$0.00</span></h5>
+                        <h5>Total: $<span class="table_total3">0</span></h5>
                     </div>
                 </div>
             </div>
@@ -197,7 +197,7 @@
                         </table>
                     </div>
                     <div class="row lottery-table-footer">
-                        <h5>Total: <span class="table-total">$0.00</span></h5>
+                        <h5>Total: $<span class="table_total4">0</span></h5>
                     </div>
                 </div>
             </div>
@@ -205,15 +205,16 @@
         <hr>
         <div class="row text-center" id="footer">
             <ul class="menu">
+                <li class="balance" style="color:white;font-weight:bolder;">$ <span>{{$balance}}</span></li>
                 <li><a href="#">Monitoreo</a></li>
                 <li><a href="#">Pendientes de Pago</a></li>
                 <li><a href="#">Imprimir Reporte</a></li>
                 <li><a href="#">Resultados</a></li>
                 <li><a href="#">Duplicar</a></li>
                 <li><a href="#">Jugadas</a></li>
-                <li><a href="#">Pagar</a></li>
-                <li><a id="create_ticket" href="javascript:void(0);">Crear ticket</a></li>
+                <li><a href="#">Pagar</a></li>                
                 <li><a href="#">Ayuda</a></li>
+                <li><a id="create_ticket" href="javascript:void(0);">Crear ticket</a></li>
                 <li><a href="javascript:void(0);" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Salir</a></li>
             </ul>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -288,7 +289,7 @@
         </div>
     </div>
 @endsection
-
+{{-- Ticket create Print --}}
 <div class="wrap-print" style="display:none;">
         <div  id="ticket_result">
                 <style>
@@ -321,37 +322,20 @@
                     <div class="logo-text text-center">
                         <h1 style="font-weight: bold;">Kaizer & Assoc</h1>
                         <h1>**&nbsp;&nbsp; ORIGINAL &nbsp;&nbsp;**</h1>
-                        <p>06/14/2019 01 : 24 PM</p>
+                        <p></p>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="ticket-info">
                         <p>Ticket: <span>001 - 280 - 014030856</span></p>
-                        <p>Fecha: <span>06/14/2019 01 : 24 PM</span></p>
+                        <p class="fecha">Fecha: <span>06/14/2019 01 : 24 PM</span></p>
                         <p>2BCC2C307D316B5D3D71032B957E7E93</p>
                         <h3>573843071605</h3>
                     </div>
                 </div>
                 <div class="col-md-12 text-center">
                     <div class="ticket-detail text-center">
-                        <div class="clone" style="display:none;">
-                            <p style="font-weight:bolder">------------------------------------------------</p>
-                            <p class="table_title"></p>
-                            <p style="font-weight:bolder">------------------------------------------------</p>
-                            <table class="text-center" style="margin-left:210px;">
-                                <thead>
-                                    <tr>
-                                        <th>JUGADA</th>
-                                        <th>MONTO</th>
-                                        <th>JUGADA</th>
-                                        <th>MONTO</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                   
-                                </tbody>
-                            </table>
-                        </div>                        
+                        
                     </div>
                     <h2 class="total_display">-- <span>TOTAL : 1.00</span> --</h2>
                 </div>
@@ -372,6 +356,97 @@
             
         </div>
     </div>
+    </div>
+{{-- Ticket cancel print --}}
+
+<div class="wrap-print" style="display:none;">
+        <div  id="ticket_cancel">
+                <style>
+                        .print-container {
+                            background: white;
+                            padding:40px;
+                        }
+                        .logo-text{
+                            margin:10px auto;
+                        }
+                        p {
+                            margin-bottom: 5px;
+                        }
+                        table thead tr th, table tbody tr td{
+                            padding-left: 10px;
+                            padding-right: 10px;
+                        }
+                        .ticket-detail table tbody tr td{
+                            text-align: left;
+                        }
+                        .general-info p,.ticket-detail p,.ticket-info p{
+                            font-style: italic;
+                            margin-bottom: 5px;
+                        }
+                    </style>
+        
+        <div class="container print-container" style="margin:0;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="logo-text text-center">
+                        <h1 style="font-weight: bold;">Kaizer & Assoc</h1>
+                        <h1>*******************</h1>
+                        <h1>*                CANCELADO              *</h1>
+                        <h1>*******************</h1>
+                        <p></p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="ticket-info">
+                        <p>Ticket: <span>001 - 280 - 014030856</span></p>
+                        <p class="fecha">Fecha: <span>06/14/2019 01 : 24 PM</span></p>
+                        <p>2BCC2C307D316B5D3D71032B957E7E93</p>
+                        <h3>573843071605</h3>
+                    </div>
+                </div>
+                <div class="col-md-12 text-center">
+                    <div class="ticket-detail text-center">
+                        
+                    </div>
+                    <h2 class="total_display">-- <span class=""></span> --</h2>
+                </div>
+                <div class="col-md-12">
+                    <div class="general-info text-center">
+                        <p>1st:$65(00-99):$60 2nd:$15</p>
+                        <p>3rd:$10 First Only and Pick2:$80</p>
+                        <p>Pale:$1,000 SuperPale:$2,000</p>
+                        <p>Cash3:$700(000-999:$500)</p>
+                        <p>Play4:$4,000 Pick5:$40,000</p>
+                        <p>Kole3:$10,000</p>
+                        <p>NO TICKET NO MONEY . WE DON'T P A Y</p>
+                        <p>DOUBLE P ALE.</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+    </div>
+
+
+    <div class="clone" style="display:none;">
+        <p style="font-weight:bolder">------------------------------------------------</p>
+        <p class="table_title"><span class="title"></span><span class="price"></span></p>
+        <p style="font-weight:bolder">------------------------------------------------</p>
+        <table class="text-center" style="margin:0 auto;">
+            <thead>
+                <tr>
+                    <th>JUGADA</th>
+                    <th>MONTO</th>
+                    <th>JUGADA</th>
+                    <th>MONTO</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
     </div>
 
 @section('script')

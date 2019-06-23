@@ -34,6 +34,7 @@ class HomeController extends Controller
     public function index()
     {
         $user_id = Auth::user()->id;
+        $balance = Auth::user()->balance;
         $lottery = Lottery::get();
         if(WinNumber::get()->isNotEmpty()){
             $date = WinNumber::latest('date')->first()->date;
@@ -41,16 +42,16 @@ class HomeController extends Controller
             $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
             if(Ticket::get()->isNotEmpty()){
                 $tickets = Ticket::where('user_id',$user_id)->get();
-                return view('home',compact('win_data','date','lottery','tickets'));
+                return view('home',compact('win_data','date','lottery','tickets','balance'));
             }else{
-                return view('home',compact('win_data','date','lottery'));
+                return view('home',compact('win_data','date','lottery','balance'));
             }            
         }else{
             if(Ticket::find($user_id)->get()->isNotEmpty()){
                 $tickets = Ticket::find($user_id)->get();
-                return view('home',compact('lottery','tickets'));
+                return view('home',compact('lottery','tickets','balance'));
             }else{
-                return view('home',compact('lottery'));
+                return view('home',compact('lottery','balance'));
             }
         }
     }
@@ -61,8 +62,8 @@ class HomeController extends Controller
         $lottery_id = $request->get('lottery_id');
         $game_id = $request->get('game_id');
         $play = $request->get('play');
-        $date = date('Y-m-d');
-        // $date = date('2019-6-23');
+        // $date = date('Y-m-d');
+        $date = date('2019-6-23');
         if(Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->get()->isEmpty()){
             return 'fail';
         }
@@ -94,6 +95,7 @@ class HomeController extends Controller
 
     public function create_ticket(Request $request)
     {
+        $total = 0;
         $user_id = Auth::user()->id;
         $ticket = $request->all();
         if(!empty($ticket)){
@@ -109,6 +111,7 @@ class HomeController extends Controller
                 $game_id = $detail[1];
                 $number = $detail[2];
                 $amount = $detail[3];
+                $total += (int)$amount;
                 TicketDetail::create([
                     'ticket_id' => $ticket_id,
                     'game_id' => $game_id,
@@ -117,13 +120,45 @@ class HomeController extends Controller
                     'amount' => $amount,
                 ]);
             }
+            $balance = Auth::user()->balance;
+            $balance = $total + (int)$balance;
+            User::find($user_id)->update(['balance' => $balance]);
             $date = date('Y-m-d h:m:s');
             return response()->json([
                 'ticket_id' => $id,
-                'date' => $date
+                'date' => $date,
+                'balance' => $balance,
             ]);
         }
         return 'fail';
+        
+    }
+
+    public function delete_ticket(Request $request)
+    {
+        $ticket_id = $request->get('ticket_id');
+        $ticket_details = TicketDetail::where('ticket_id',$ticket_id)->get();
+        $date = date('Y-m-d h:m:s');
+        $results = array();
+        foreach ($ticket_details as $ticket) {
+            array_push($results,$ticket->lottery_id.','.$ticket->game_id.','.$ticket->number.','.$ticket->amount);
+        }
+        $amount = Ticket::find($ticket_id)->details()->sum('amount');
+        if($request->get('copy') == 1){
+            array_push($results,$amount);
+            array_push($results,$date);
+            return $results;
+        }else{
+            $user_id = Auth::user()->id;
+            $balance = Auth::user()->balance;
+            $balance = (int)$balance - $amount;
+            User::find($user_id)->update(['balance' => $balance]);
+            Ticket::where('id', $ticket_id)->delete();
+            TicketDetail::where('ticket_id', $ticket_id)->delete();
+            array_push($results,$balance);
+            array_push($results,$date);
+            return $results;
+        }
         
     }
 }

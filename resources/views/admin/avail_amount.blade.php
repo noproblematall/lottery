@@ -243,3 +243,18 @@
         })
     </script>
 @endsection
+
+<div class="loader_container">    
+        <div class="loader">
+            <div class="ball-spin-fade-loader">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>    
+    </div>

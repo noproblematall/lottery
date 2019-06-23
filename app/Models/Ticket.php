@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     protected $fillable = [
-        'user_id','ticket_number',
+        'user_id','ticket_number','created_at','updated_at',
     ];
+
 
     public function user(){
         return $this->belongsTo('App\User');
