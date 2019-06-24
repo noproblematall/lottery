@@ -329,7 +329,6 @@
                     <div class="ticket-info">
                         <p>Ticket: <span>001 - 280 - 014030856</span></p>
                         <p class="fecha">Fecha: <span>06/14/2019 01 : 24 PM</span></p>
-                        <p>2BCC2C307D316B5D3D71032B957E7E93</p>
                         <h3>573843071605</h3>
                     </div>
                 </div>

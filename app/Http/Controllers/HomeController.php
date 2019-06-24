@@ -13,6 +13,7 @@ use App\Models\Ticket;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -97,13 +98,16 @@ class HomeController extends Controller
     {
         $total = 0;
         $user_id = Auth::user()->id;
+        $user_name = Auth::user()->name;
         $ticket = $request->all();
         if(!empty($ticket)){
-            $id = DB::table('tickets')->insertGetId(
-                [
-                    'user_id' => $user_id,
-                ]
-            );
+            $unique_id = hexdec(uniqid());
+            $data = Ticket::create([
+                'user_id' => $user_id,
+                'bar_code' => $unique_id,
+            ]);
+            $id = $data->id;
+            $date = $data->created_at->format('m/d/Y h:i A');
             foreach ($ticket as $value) {
                 $detail = explode(',',$value);
                 $ticket_id = $id;
@@ -123,11 +127,12 @@ class HomeController extends Controller
             $balance = Auth::user()->balance;
             $balance = $total + (int)$balance;
             User::find($user_id)->update(['balance' => $balance]);
-            $date = date('Y-m-d h:m:s');
             return response()->json([
                 'ticket_id' => $id,
                 'date' => $date,
                 'balance' => $balance,
+                'name' => $user_name,
+                'bar_code' => $unique_id,
             ]);
         }
         return 'fail';

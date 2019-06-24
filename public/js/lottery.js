@@ -232,11 +232,14 @@ $(document).ready(function () {
                     var date = data.date;
                     var ticket_id = data.ticket_id;
                     var display_ticket = ticket_id + ' - ' + '$' + total_amount;
+                    var print_ticket_id = '001 - ' + data.name + ' - ' + ticket_id;
                     var html = `<option value="${ticket_id}">${display_ticket}</option>`
                     $('#tickets').prepend(html);
                     $('.balance span').text(data.balance);
-                    $('.print-container div.logo-text p').text(date);
-                    $('.print-container div.ticket-info p.fecha span').text(date);
+                    $('#ticket_result .print-container div.logo-text p').text(date);
+                    $('#ticket_result .print-container div.ticket-info p.fecha span').text(date);
+                    $('#ticket_result .print-container div.ticket-info p:first').text(print_ticket_id);
+                    $('#ticket_result .print-container div.ticket-info h3').text(data.bar_code);
                     // $('.total_display span').text(total_amount+'.00');
 
                     $('.ticket-detail').empty();
