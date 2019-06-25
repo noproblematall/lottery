@@ -206,8 +206,7 @@
         <div class="row text-center" id="footer">
             <ul class="menu">
                 <li class="balance" style="color:white;font-weight:bolder;">$ <span>{{$balance}}</span></li>
-                <li><a href="#">Monitoreo</a></li>
-                <li><a href="#">Pendientes de Pago</a></li>
+                <li><a href="{{asset('summary')}}">Sales Summary</a></li>
                 <li><a href="#">Imprimir Reporte</a></li>
                 <li><a href="#">Resultados</a></li>
                 <li><a href="#">Duplicar</a></li>
@@ -327,16 +326,16 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ticket-info">
-                        <p>Ticket: <span>001 - 280 - 014030856</span></p>
-                        <p class="fecha">Fecha: <span>06/14/2019 01 : 24 PM</span></p>
-                        <h3>573843071605</h3>
+                        <p>Ticket: <span></span></p>
+                        <p class="fecha">Fecha: <span></span></p>
+                        <h3></h3>
                     </div>
                 </div>
                 <div class="col-md-12 text-center">
                     <div class="ticket-detail text-center">
                         
                     </div>
-                    <h2 class="total_display">-- <span>TOTAL : 1.00</span> --</h2>
+                    <h2 class="total_display">-- <span></span> --</h2>
                 </div>
                 <div class="col-md-12">
                     <div class="general-info text-center">
@@ -382,6 +381,9 @@
                             font-style: italic;
                             margin-bottom: 5px;
                         }
+                        .logo-text h1{
+                            margin: 0;
+                        }
                     </style>
         
         <div class="container print-container" style="margin:0;">
@@ -392,15 +394,14 @@
                         <h1>*******************</h1>
                         <h1>*                CANCELADO              *</h1>
                         <h1>*******************</h1>
-                        <p></p>
+                        <p style="margin:5px;"></p>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="ticket-info">
-                        <p>Ticket: <span>001 - 280 - 014030856</span></p>
-                        <p class="fecha">Fecha: <span>06/14/2019 01 : 24 PM</span></p>
-                        <p>2BCC2C307D316B5D3D71032B957E7E93</p>
-                        <h3>573843071605</h3>
+                        <p>Ticket: <span></span></p>
+                        <p class="fecha">Fecha: <span></span></p>
+                        <h3></h3>
                     </div>
                 </div>
                 <div class="col-md-12 text-center">
@@ -449,6 +450,7 @@
     </div>
 
 @section('script')
+<script src="{{ asset('js/lottery.js') }}"></script>
 <script src="{{asset('js/print.js')}}"></script>
     <script>
         $(document).ready(function(){

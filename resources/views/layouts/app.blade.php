@@ -36,7 +36,7 @@
     <script src="{{ asset('js/jquery.min.js') }}" ></script>
     <script src="{{ asset('js/poper.min.js') }}" ></script>
     <script src="{{ asset('js/bootstrap.min.js') }}" ></script>
-    <script src="{{ asset('js/lottery.js') }}"></script>
+    
     @yield('modal')
     @yield('script')
 </body>

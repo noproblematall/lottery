@@ -63,8 +63,8 @@ class HomeController extends Controller
         $lottery_id = $request->get('lottery_id');
         $game_id = $request->get('game_id');
         $play = $request->get('play');
-        // $date = date('Y-m-d');
-        $date = date('2019-6-23');
+        $date = date('Y-m-d');
+        // $date = date('2019-6-23');
         if(Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->get()->isEmpty()){
             return 'fail';
         }
@@ -141,16 +141,18 @@ class HomeController extends Controller
 
     public function delete_ticket(Request $request)
     {
+        $user_name = Auth::user()->name;
         $ticket_id = $request->get('ticket_id');
         $ticket_details = TicketDetail::where('ticket_id',$ticket_id)->get();
-        $date = date('Y-m-d h:m:s');
+        $date = date('m/d/Y h:i A');
         $results = array();
         foreach ($ticket_details as $ticket) {
             array_push($results,$ticket->lottery_id.','.$ticket->game_id.','.$ticket->number.','.$ticket->amount);
         }
         $amount = Ticket::find($ticket_id)->details()->sum('amount');
         if($request->get('copy') == 1){
-            array_push($results,$amount);
+            array_push($results,$user_name);
+            array_push($results,$ticket_id);
             array_push($results,$date);
             return $results;
         }else{
@@ -158,12 +160,58 @@ class HomeController extends Controller
             $balance = Auth::user()->balance;
             $balance = (int)$balance - $amount;
             User::find($user_id)->update(['balance' => $balance]);
+            $bar_code = Ticket::where('id',$ticket_id)->first()->bar_code;
             Ticket::where('id', $ticket_id)->delete();
             TicketDetail::where('ticket_id', $ticket_id)->delete();
+            array_push($results,$bar_code);
+            array_push($results,$user_name);
             array_push($results,$balance);
             array_push($results,$date);
             return $results;
         }
         
+    }
+
+    public function summary()
+    {
+        $sum_of_amount = 0;
+        $win_tickets_id = array();
+        $total = 0;
+        $user_id = Auth::user()->id;
+        $name = Auth::user()->name;
+        $date = date('Y-m-d');
+        $yesterday = date('Y-m-d',strtotime("-1 days"));
+        $win_numbers = WinNumber::where('date',$yesterday)->orderBy('lottery_id')->get();
+        $win_numbers_array = array();
+        foreach ($win_numbers as $item) {
+            $win_numbers_array[$item->lottery_id] = explode(",", $item->value);
+        }
+        // dd($win_numbers_array);
+        $yesterday_tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$yesterday)->get();
+        foreach ($yesterday_tickets as $ticket) {
+            foreach ($ticket->details as $detail) {
+                if(isset($win_numbers_array[$detail->lottery_id])){
+                    $detail_number = preg_replace('/[^0-9]/', '', $detail->number);
+                    if(in_array($detail_number, $win_numbers_array[$detail->lottery_id])){                        
+                        $sum_of_amount += $detail->amount;
+                        if(! in_array($detail->ticket_id, $win_tickets_id)){
+                            array_push($win_tickets_id, $detail->ticket_id);
+                        }
+                    }
+                }
+            }
+        }
+        $win_tickets_number = count($win_tickets_id);
+        $loser_tickets_number = $yesterday_tickets->count() - $win_tickets_number;
+        $today_tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$date)->get();
+
+        foreach ($today_tickets as $ticket) {
+            $amount = TicketDetail::where('ticket_id',$ticket->id)->sum('amount');
+            $total += $amount;
+        }
+        $today_balance = $total;
+        $balance = Auth::user()->balance;
+        $current_balance = $balance - $today_balance;
+        return view('summary',compact('balance','current_balance','today_balance','name','sum_of_amount','win_tickets_number','loser_tickets_number'));
     }
 }

@@ -47,10 +47,7 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('check-avail','HomeController@check_avail')->name('check_avail');
 Route::get('create-ticket','HomeController@create_ticket')->name('create_ticket');
 Route::get('delete-ticket','HomeController@delete_ticket')->name('delete_ticket');
+Route::get('summary','HomeController@summary')->name('summary');
 
-
-Route::get('print',function(){
-    return view('print');
-});
 
 

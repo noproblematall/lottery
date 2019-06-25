@@ -196,7 +196,12 @@ $(document).ready(function () {
     })
 
     $(document).on('click', '.remove_this', function () {
+        let total = $(this).parents('div.ticket-info-container').children('.lottery-table-footer').find('span').text();
+        let value = $(this).parent().parent().children('td').eq(2).text();
+        total = total - value;
+        $(this).parents('div.ticket-info-container').children('.lottery-table-footer').find('span').text(total);
         $(this).parent().parent().remove();
+
     })
 
     $('body').on('keyup', function (e) {
@@ -256,6 +261,11 @@ $(document).ready(function () {
                     $('#playsTableBodyPale').empty();
                     $('#playsTableBodyCash').empty();
                     $('#playsTableBodyPick').empty();
+
+                    $('.table_total1').text('0')
+                    $('.table_total2').text('0')
+                    $('.table_total3').text('0')
+                    $('.table_total4').text('0')
                     total_amount = 0;
                     total_play = 0;
                     $('#total_play').val('');
@@ -279,6 +289,11 @@ $(document).ready(function () {
                     $('#ticket_cancel .ticket-detail').empty();
                     let date = data.pop();
                     let balance = data.pop();
+                    let name = data.pop();
+                    let bar_code = data.pop();
+                    var print_ticket_id = '001 - ' + name + ' - ' + ticket_id;
+                    $('#ticket_cancel .print-container div.ticket-info h3').text(bar_code);
+                    $('#ticket_cancel .print-container div.ticket-info p:first').text(print_ticket_id);
                     $('.balance span').text(balance);
                     $('#ticket_cancel .logo-text p').text(date);
                     $('#ticket_cancel .fecha span').text(date);
@@ -304,9 +319,13 @@ $(document).ready(function () {
                 success: function (data) {
                     $('#ticket_result .ticket-detail').empty();
                     let date = data.pop();
-                    let balance = data.pop();
+                    let ticket_id = data.pop();
+                    let name = data.pop();
+                    var print_ticket_id = '001 - ' + name + ' - ' + ticket_id;
                     $('#ticket_result .logo-text p').text(date);
                     $('#ticket_result .fecha span').text(date);
+                    $('#ticket_result .print-container div.ticket-info p:first').text(print_ticket_id);
+                    $('#ticket_result .print-container div.ticket-info h3').empty();
                     draw_table(data, 'cancel');
                     printJS({
                         printable: 'ticket_result',
