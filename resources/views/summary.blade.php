@@ -21,7 +21,7 @@
     </style>
 @endsection
 @section('content')
-<span class="date">06/25/2019</span>
+<span class="date">{{$date}}</span>
 <a href="{{route('home')}}" class="btn btn-primary">Back</a>
 <div class="container">
     <div class="row">
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td>Pending</td>
-                            <td>{{$win_tickets_number}}</td>
+                            <td>{{$pending_tickets_number}}</td>
                         </tr>
                         <tr>
                             <td>Losers</td>
@@ -57,6 +57,10 @@
                         <tr>
                             <td>Winners</td>
                             <td>{{$win_tickets_number}}</td>
+                        </tr>
+                        <tr>
+                            <td>Prizes</td>
+                            <td>{{$prizes}}</td>
                         </tr>
                         <tr>
                             <td>Net</td>

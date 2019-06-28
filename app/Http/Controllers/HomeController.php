@@ -37,19 +37,21 @@ class HomeController extends Controller
         $user_id = Auth::user()->id;
         $balance = Auth::user()->balance;
         $lottery = Lottery::get();
+        $today = date('Y-m-d');
+        
         if(WinNumber::get()->isNotEmpty()){
             $date = WinNumber::latest('date')->first()->date;
             $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
             $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
-            if(Ticket::get()->isNotEmpty()){
-                $tickets = Ticket::where('user_id',$user_id)->get();
+            if(Ticket::where('user_id',$user_id)->whereDate('created_at',$today)->get()->isNotEmpty()){
+                $tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$today)->get();
                 return view('home',compact('win_data','date','lottery','tickets','balance'));
             }else{
                 return view('home',compact('win_data','date','lottery','balance'));
             }            
         }else{
-            if(Ticket::find($user_id)->get()->isNotEmpty()){
-                $tickets = Ticket::find($user_id)->get();
+            if(Ticket::where('user_id',$user_id)){
+                $tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$date)->get();
                 return view('home',compact('lottery','tickets','balance'));
             }else{
                 return view('home',compact('lottery','balance'));
@@ -82,9 +84,11 @@ class HomeController extends Controller
                         }
                     }
                 }
+               return $price; 
             }else{
                 return $price;
             }
+
         }else{
             $errors = [
                 'error' => 'error',
@@ -175,34 +179,43 @@ class HomeController extends Controller
     public function summary()
     {
         $sum_of_amount = 0;
-        $win_tickets_id = array();
+        // $win_tickets_id = array();
+        $prizes = 0;
         $total = 0;
         $user_id = Auth::user()->id;
         $name = Auth::user()->name;
         $date = date('Y-m-d');
         $yesterday = date('Y-m-d',strtotime("-1 days"));
-        $win_numbers = WinNumber::where('date',$yesterday)->orderBy('lottery_id')->get();
-        $win_numbers_array = array();
-        foreach ($win_numbers as $item) {
-            $win_numbers_array[$item->lottery_id] = explode(",", $item->value);
-        }
-        // dd($win_numbers_array);
+        // $win_numbers = WinNumber::where('date',$yesterday)->orderBy('lottery_id')->get();
         $yesterday_tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$yesterday)->get();
+        // $win_numbers_array = array();
+        // foreach ($win_numbers as $item) {
+        //     $win_numbers_array[$item->lottery_id] = explode(",", $item->value);
+        // }
+        // // dd($win_numbers_array);
+        // $yesterday_tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$yesterday)->get();
+        // foreach ($yesterday_tickets as $ticket) {
+        //     foreach ($ticket->details as $detail) {
+        //         if(isset($win_numbers_array[$detail->lottery_id])){
+        //             $detail_number = preg_replace('/[^0-9]/', '', $detail->number);
+        //             if(in_array($detail_number, $win_numbers_array[$detail->lottery_id])){                        
+        //                 $sum_of_amount += $detail->amount;
+        //                 if(! in_array($detail->ticket_id, $win_tickets_id)){
+        //                     array_push($win_tickets_id, $detail->ticket_id);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // $win_tickets_number = count($win_tickets_id);
+
+        $pending_tickets_number = Ticket::where([['user_id',$user_id],['is_pending',1]])->whereDate('created_at',$yesterday)->count();
         foreach ($yesterday_tickets as $ticket) {
-            foreach ($ticket->details as $detail) {
-                if(isset($win_numbers_array[$detail->lottery_id])){
-                    $detail_number = preg_replace('/[^0-9]/', '', $detail->number);
-                    if(in_array($detail_number, $win_numbers_array[$detail->lottery_id])){                        
-                        $sum_of_amount += $detail->amount;
-                        if(! in_array($detail->ticket_id, $win_tickets_id)){
-                            array_push($win_tickets_id, $detail->ticket_id);
-                        }
-                    }
-                }
-            }
+            $sum_of_amount += $ticket->details()->where('is_win',1)->sum('amount');
+            $prizes += $ticket->details()->where('is_win',1)->sum('prize');
         }
-        $win_tickets_number = count($win_tickets_id);
-        $loser_tickets_number = $yesterday_tickets->count() - $win_tickets_number;
+        $loser_tickets_number = Ticket::where([['user_id',$user_id],['is_pending',0]])->whereDate('created_at',$yesterday)->count();
+        $win_tickets_number = $yesterday_tickets->count() - $loser_tickets_number;
         $today_tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$date)->get();
 
         foreach ($today_tickets as $ticket) {
@@ -212,6 +225,81 @@ class HomeController extends Controller
         $today_balance = $total;
         $balance = Auth::user()->balance;
         $current_balance = $balance - $today_balance;
-        return view('summary',compact('balance','current_balance','today_balance','name','sum_of_amount','win_tickets_number','loser_tickets_number'));
+        return view('summary',compact('balance','current_balance','today_balance','name','sum_of_amount','win_tickets_number','loser_tickets_number','date','pending_tickets_number','prizes'));
+    }
+
+    public function manage_ticket()
+    {
+        $game = Game::get();
+        $lottery = Lottery::get();
+        $date = date('Y-m-d');
+        $yesterday = date('Y-m-d',strtotime("-1 days"));
+        $date = $yesterday;
+        $tickets = Ticket::whereDate('created_at', $yesterday)->get();
+        return view('manage_ticket',compact('tickets','date','lottery','game'));
+    }
+
+    public function search_ticket(Request $request)
+    {
+        $game = Game::get();
+        $lottery = Lottery::get();
+        $date = $request->get('search_date');
+        $tickets = Ticket::whereDate('created_at', $date)->get();
+        return view('manage_ticket',compact('tickets','date','lottery','game'));
+    }
+
+    public function ticket_mark(Request $request)
+    {
+        $user_id = Auth::user()->id;
+        // $ticket_id = $request->get('ticket_id');
+        $barcode = $request->get('code');
+        $temp = Ticket::where([['bar_code',$barcode],['user_id',$user_id]]);
+        if($request->has('is_paid') && $request->get('is_paid')){
+            $paid = $request->get('is_paid');
+            if(!empty($temp->first())){
+                if($temp->first()->is_pending == 1){
+                    $temp->update([
+                        'is_pending' => 2,
+                    ]);
+                    return 'ok';
+                }else{
+                    return 'already';
+                }
+                
+            }else{
+                return 'no';
+            }
+        }else{
+            if(!empty($temp->first())){
+                // if($temp->first()->is_pending == 1){
+                //     $temp->update([
+                //         'is_pending' => 2,
+                //     ]);
+                // }
+                $ticket = $temp->first()->load('details');
+                return response()->json($ticket);
+            }else{
+                return 'no';
+            }
+        }        
+    }
+
+    public function duplicate(Request $request)
+    {
+        $user_id = Auth::user()->id;
+        $bar_code = $request->get('bar_code');
+        $temp = Ticket::where([['bar_code',$bar_code],['user_id',$user_id]]);
+        if(!empty($temp->first())){
+            // if($temp->first()->is_pending == 1){
+            //     $temp->update([
+            //         'is_pending' => 2,
+            //     ]);
+            // }
+            $ticket = $temp->first()->load('details');
+            return response()->json($ticket);
+        }else{
+            return 'no';
+        }
+        return $request->all();
     }
 }

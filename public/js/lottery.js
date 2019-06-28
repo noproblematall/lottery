@@ -49,7 +49,20 @@ $(document).ready(function () {
             $('#myplay1').focus();
             return false;
         }
-
+       let lottery_name =  $('.lottery li[id=' + lottery_id + ']').text();
+       let lottery_abbrev = $('.lottery li[id=' + lottery_id + ']').attr('name');
+       if(lottery_name == "FL Pick2 AM" || lottery_abbrev == "P2AM" || lottery_name == "FL Pick2 PM" || lottery_abbrev == "P2PM"){
+           if(play.length != 2){
+                $('#warning').find('span').text('Invaild Play1');
+                $('#warning').removeClass('display-none');
+                $(this).focusout();
+                $('#myplay1').focus();
+                setTimeout(function () {
+                    $('#warning').addClass('display-none');
+                }, 2000);
+                return false;
+           }
+       }
         if (play.indexOf('+') >= 0 || play.indexOf('-') >= 0) {
             if (play.indexOf('+') == 4) {
                 game_id = 7;
@@ -322,6 +335,7 @@ $(document).ready(function () {
                     let ticket_id = data.pop();
                     let name = data.pop();
                     var print_ticket_id = '001 - ' + name + ' - ' + ticket_id;
+                    $('#ticket_result h1.origin').html('**&nbsp;&nbsp; COPIED &nbsp;&nbsp;**');
                     $('#ticket_result .logo-text p').text(date);
                     $('#ticket_result .fecha span').text(date);
                     $('#ticket_result .print-container div.ticket-info p:first').text(print_ticket_id);
@@ -343,10 +357,261 @@ $(document).ready(function () {
         myTimer();
       }, 1000);
       
-      function myTimer() {
-        var d = new Date();
+    function myTimer() {
+        var aestTime = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
+        var d = new Date(aestTime);
         document.getElementById("clock").innerHTML = d.toLocaleTimeString();
-      }
+    }
+
+    $('#mark_modal .ticket_mark_result').addClass('display-none');
+
+    $('#pagar').click(function(){
+        $('#mark_modal').modal({backdrop: "static"});
+    })
+    $("#mark_modal").on('hidden.bs.modal', function(){
+        location.reload();
+    });
+    $('.mark_submit').click(function(){
+        // let ticket_id = $(this).attr('id');
+        let code = $('#code').val();
+        let temp_barcode = $('#temp_barcode').val();
+        let data;
+        if(!code){
+            $('#code-require-error').addClass('display-show');
+            return false;
+        }
+        if(code == temp_barcode){
+            data = {code:code,is_paid:1};
+        }else{
+            data = {code:code}
+        }
+        $.ajax({
+            url:'ticket-mark',
+            data:data,
+            type:'get',
+            success:function(data){
+                console.log(data);
+                if(data == 'no'){
+                    $('.error').removeClass('display-show');
+                    $('#code-invalid-error').addClass('display-show');
+                }else if(data == 'ok'){
+                    swal({
+                        title: "Success",
+                        text: "Successful paid.",
+                        icon: "success",
+                        button: "OK",
+                    }).then(()=>{
+                        location.reload();
+                    });
+                }else if(data == 'already'){
+                    alert('The ticket is not a winning ticket or has already been paid.');
+                }else{
+                    $('#temp_barcode').val(data.bar_code);
+                    $('.mark_result').empty();
+                    let amount = 0;
+                    let prize = 0;
+                    let pending_flag = 0;
+                    $('.ticket_mark_result').removeClass('display-none');
+                    let name = $('.name').text();
+                    name = name + '-' + data.id;
+                    $('.ticket_mark_result h5 span').text(name);
+                    data.details.forEach(detail => {
+                        amount += detail.amount;
+                        if(detail.is_win == 1){
+                            prize += Number(detail.prize);
+                        }
+                    });
+                    $('.ticket_mark_result .amount').text(amount);
+                    if(data.is_pending == 1){
+                        $('.ticket_mark_result .pending_payment').text(prize);
+                    }
+                    if(data.is_pending == 2){
+                        pending_flag = 1;
+                    }
+                    let lottery_length = $('.lottery li').length;
+
+                    var details = data['details'];
+                    console.log(details.length)
+                    for(let j=1;j<=lottery_length;j++){
+                        var temp = 0;
+                        var txt = "";
+                        for(let i=0;i<details.length;i++){
+                            
+                            if(details[i]['lottery_id'] == j){
+                                if(temp == 0){
+                                    temp = 1;
+                                    txt += "<tr>"+"<td colspan='5'>"+ $('.lottery li[id=' + j + ']').text() +"</td>"+"</tr>";
+                                    if(details[i]['is_win'] == 1){
+                                        txt += '<tr class="winning-play">';
+                                    }
+                                    if(details[i]['is_win'] == 0){
+                                        txt += '<tr class="losing-play">';
+                                    }
+                                    
+                                    txt += '<td>'+details[i]['number']+'</td>';
+                                    txt += '<td>'+$('.game li[id=' + details[i]['game_id'] + ']').text()+'</td>';
+                                    txt += '<td>'+details[i]['amount']+'</td>';
+                                    txt += '<td>'+details[i]['prize']+'</td>';
+                                    if(pending_flag && details[i]['is_win'] == 1){
+                                        txt += '<td style="color:blue;">paid</td>';
+                                    }else if(!pending_flag && details[i]['is_win'] == 1){
+                                        txt += '<td style="color:red;">pending</td>';
+                                    }else{
+                                        txt += '<td></td>'
+                                    }
+                                    
+                                    txt += '</tr>';
+                                } else {
+                                    if(details[i]['is_win'] == 1){
+                                        txt += '<tr class="winning-play">';
+                                    }
+                                    if(details[i]['is_win'] == 0){
+                                        txt += '<tr class="losing-play">';
+                                    }
+                                    txt += '<td>'+details[i]['number']+'</td>';
+                                    txt += '<td>'+$('.game li[id=' + details[i]['game_id'] + ']').text()+'</td>';
+                                    txt += '<td>'+details[i]['amount']+'</td>';
+                                    txt += '<td>'+details[i]['prize']+'</td>';
+                                    if(pending_flag && details[i]['is_win'] == 1){
+                                        txt += '<td style="color:blue;">paid</td>';
+                                    }else if(!pending_flag && details[i]['is_win'] == 1){
+                                        txt += '<td style="color:red;">pending</td>';
+                                    }else{
+                                        txt += '<td></td>'
+                                    }
+                                    txt += '</tr>';
+                                }
+                                
+                            }
+                        }
+
+                        $('.mark_result').append(txt);
+                    }
+                    
+                }
+            }
+        })
+    })
+
+    $('#duplicate').click(function(){
+        $('#duplicate_modal').modal({backdrop: "static"});
+        $('#ticket_number').focus();
+    })
+    // $("#duplicate_modal").on('hidden.bs.modal', function(){
+    //     location.reload();
+    // });
+
+    $('.duplicate_lottery').addClass('display-none');
+
+    var duplicate_data = [];
+    $('.duplicate_submit').click(function(){
+        let ticket_number = $('#ticket_number').val();
+        let temp_barcode = $('#temp_barcode2').val();
+        if(temp_barcode && duplicate_data.length > 0 && ticket_number == temp_barcode){
+            console.log(duplicate_data)
+            let lottery_length = $('#duplicate_modal .duplicate_result .one_lottery').length;
+            $('#duplicate_modal .duplicate_result .one_lottery').each(function(){
+                let from_id = $(this).find('label').attr('temp_id')
+                let to_id = $(this).find('select').val();
+                if(from_id && to_id){
+                    let html = ``;
+                    duplicate_data.forEach(ele => {
+                        if(from_id == ele.lottery_id){
+                            let lottery_name = $('#' + to_id).attr('name');
+                            html = `<tr>
+                                <td name="${to_id}">${lottery_name}</td>
+                                <td name="${ele.game_id}">${ele.number}</td>
+                                <td name="${ele.number}">${ele.amount}</td>
+                                <td name="${ele.amount}"><i class='fa fa-trash remove_this' style="color:red;"></i></td>
+                            </tr>`
+                            if (ele.game_id == 1) {
+                                $('#playsTableBodyDirecto').prepend(html);
+                                let sub_total = $('.table_total1 ').text();
+                                sub_total = Number(sub_total) + Number(ele.amount);
+                                $('.table_total1').text(sub_total);
+                            } else if (ele.game_id == 2 || ele.game_id == 3) {
+                                $('#playsTableBodyPale').prepend(html);
+                                let sub_total = $('.table_total2').text();
+                                sub_total = Number(sub_total) + Number(ele.amount);
+                                $('.table_total2').text(sub_total);
+                            } else if (ele.game_id == 4 || ele.game_id == 5) {
+                                $('#playsTableBodyCash').prepend(html);
+                                let sub_total = $('.table_total3').text();
+                                sub_total = Number(sub_total) + Number(ele.amount);
+                                $('.table_total3').text(sub_total);
+                            } else if (ele.game_id == 6 || ele.game_id == 7) {
+                                $('#playsTableBodyPick').prepend(html);
+                                let sub_total = $('.table_total4').text();
+                                sub_total = Number(sub_total) + Number(ele.amount);
+                                $('.table_total4').text(sub_total);
+                            }
+                        }
+                    });
+                    
+                }
+
+            })
+            
+            return false;
+        }
+        if(!ticket_number){
+            $('#ticket_number-require-error').addClass('display-show');
+            return false;
+        }
+
+        $.ajax({
+            url:'duplicate',
+            data:{bar_code:ticket_number},
+            type:'get',
+            success:function(data){
+                console.log(data);
+                if(data == 'no'){
+                    $('.duplicate_lottery').addClass('display-none');
+                    $('.duplicate_result').empty();
+                    $('.error').removeClass('display-show');
+                    $('#ticket_number-invalid-error').addClass('display-show');
+                }else{
+                    duplicate_data = data.details;
+                    $('#temp_barcode2').val(data.bar_code);
+                    $('.duplicate_result').empty();
+                    $('.duplicate_lottery').removeClass('display-none');
+                    $('.error').removeClass('display-show');
+                    var details = data['details'];
+                    let lottery_length = $('.lottery li').length;
+                    for(let j=1;j<=lottery_length;j++){
+                        var temp = 0;
+                        var txt = ``;
+                        for (let i = 0; i < details.length; i++) {
+                            if(details[i]['lottery_id'] == j){
+                                if(temp == 0){
+                                    temp = 1;
+                                    txt += `
+                                        <div class="one_lottery clearfix mb-3">
+                                            <label for="lottery_array" temp_id="${j}" class="float-left">${$('.lottery li[id=' + j + ']').text()}</label>
+                                            
+                                        </div>
+                                    `
+                                } else {
+
+                                }
+                                
+                            }
+                        }
+
+                        $('.duplicate_result').append(txt);
+                            
+                    }
+
+                    var items = $(".one_lottery");
+                    console.log(items);
+                    let clone_lottery = $('#lottery_clone').clone().removeAttr('id');
+                    clone_lottery.removeClass('display-none');
+                    // for(let i=0;i<items.length)
+                    items.append(clone_lottery);
+                }
+            }
+        })
+    })
 
 })
 
@@ -389,8 +654,8 @@ function check_avail(lottery_id, game_id, play) {
 function draw_table(print_data, tag) {
 
     var total_price = 0;
-
-    for (let i = 1; i <= 10; i++) {
+    let lottery_length = $('.lottery li').length;
+    for (let i = 1; i <= lottery_length; i++) {
         var cl = $('.clone').clone().removeClass('clone');
         var temp = 0;
         var key = 0;

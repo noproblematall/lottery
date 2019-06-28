@@ -12,13 +12,15 @@ class GameSeeder extends Seeder
      */
     public function run()
     {
-        Game::create(['name' => 'Directo']);
-        Game::create(['name' => 'Pale']);
-        Game::create(['name' => 'Tripleta']);
-        Game::create(['name' => 'Cash 3 Straight']);
-        Game::create(['name' => 'Cash 3 Box']);
-        Game::create(['name' => '4 Straight']);
-        Game::create(['name' => '4 Box']);
-        Game::create(['name' => 'Super Pale']);
+        Game::create(['name' => 'Directo','price' => '65,15,10']);
+        Game::create(['name' => 'Pale','price' => '800']);
+        Game::create(['name' => 'Tripleta','price' => '10000']);
+        Game::create(['name' => 'Cash 3 Straight','price' => '700']);
+        Game::create(['name' => 'Cash 3 Box','price' => '700']);
+        Game::create(['name' => 'Play 4 Straight','price' => '4000']);
+        Game::create(['name' => 'Play 4 Box','price' => '4000']);
+        Game::create(['name' => 'Pick 5 Straight','price' => '30000']);
+        Game::create(['name' => 'Pick 5 Box','price' => '30000']);
+        Game::create(['name' => 'Super Pale','price' => '2000']);
     }
 }

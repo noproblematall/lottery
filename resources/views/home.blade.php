@@ -6,16 +6,21 @@
             padding:2px !important;
             text-align: center;
         }
+        #duplicate_modal .one_lottery label{
+                color:black;
+        }
     </style>
 @endsection
 @section('content')
-<div class="winning_number float-left">
+<span class="name" style="display:none;">{{Auth::user()->name}}</span>
+
+<div class="float-left">
     <div class="btn-group btn-group-sm">
-        <button type="button" id="winning_number" class="btn btn-primary"> NUMEROS GANADORES </button>
+        <button type="button" class="btn btn-primary winning_number"> NUMEROS GANADORES </button>
         <button type="button" id="print_win" class="btn btn-warning"><i class="fa fa-print"></i></button>
     </div>
 </div>
-<div class="winning_number float-right" style="margin-right:10px;color:wheat;">
+<div class="float-right" style="margin-right:10px;color:wheat;">
     <h5 id="clock"></h5>
 </div>
 <div class="container custom_container">
@@ -28,7 +33,7 @@
         <ul class="lottery mx-auto">
             @isset($lottery)
                 @foreach ($lottery as $item)
-                    <li id="{{$item->id}}" name="{{$item->abbrev}}">{{$item->name}}</li>
+                    <li id="{{$item->id}}" time="{{$item->limit_time}}" name="{{$item->abbrev}}">{{$item->name}}</li>
                 @endforeach
             @endisset
             {{-- <li>New York AM</li>
@@ -206,13 +211,12 @@
         <div class="row text-center" id="footer">
             <ul class="menu">
                 <li class="balance" style="color:white;font-weight:bolder;">$ <span>{{$balance}}</span></li>
-                <li><a href="{{asset('summary')}}">Sales Summary</a></li>
-                <li><a href="#">Imprimir Reporte</a></li>
-                <li><a href="#">Resultados</a></li>
-                <li><a href="#">Duplicar</a></li>
-                <li><a href="#">Jugadas</a></li>
-                <li><a href="#">Pagar</a></li>                
-                <li><a href="#">Ayuda</a></li>
+                <li><a href="{{route('summary')}}">Sales Summary</a></li>
+                <li><a href="{{route('manage_ticket')}}">Pendientes de Pago</a></li>
+                <li><a href="javascript:void(0);" class="winning_number">Resultados</a></li>
+                <li><a href="javascript:void(0);" id="duplicate">Duplicar</a></li>
+                <li><a href="javascript:void(0);" id="pagar">Pagar</a></li>
+                <li><a href="javascript:void(0);" id="help">Ayuda</a></li>
                 <li><a id="create_ticket" href="javascript:void(0);">Crear ticket</a></li>
                 <li><a href="javascript:void(0);" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Salir</a></li>
             </ul>
@@ -251,7 +255,7 @@
                     <table style="width: 100%;" id="results" class="table table-hover table-striped table-bordered">
                         <thead>
                             <tr> 
-                                <th colspan="6" class="text-center"> RESULTADOS {{$date}}<span></span> </th> 
+                                <th colspan="6" class="text-center"> RESULTADOS @isset($date){{$date}}@endisset<span></span> </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,7 +291,206 @@
             </div>
         </div>
     </div>
+
+    <!-- The Modal -->
+  <div class="modal fade" id="help_modal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h2 class="modal-title">Help</h2>
+          <button type="button" class="close" data-dismiss="modal">×</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#how_to_play">How to play?</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#keys">keys</a>
+                </li>
+                {{-- <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#menu2">Menu 2</a>
+                </li> --}}
+            </ul>
+            
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active container" id="how_to_play">
+                    <h4>To play a Directo</h4> 
+                    <ol> 
+                        <li>Type a two digit number on the Play and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Palé</h4> 
+                    <ol> 
+                        <li>Type the a four digit number on the Play and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Tripleta</h4> 
+                    <ol> 
+                        <li>Type a six digits number on the Play and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Cash 3 Straight</h4> 
+                    <ol> 
+                        <li>Type a three digits number on the Play and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Cash 3 Box</h4> 
+                    <ol> 
+                        <li>Type a three digits number on the Play followed by a + sign (Ex .: 123+) and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Play 4 Straight</h4> 
+                    <ol> 
+                        <li>Type a four digits number on the Play followed by a - sign (Ex .: 1234-) and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Play 4 Box</h4> 
+                    <ol> 
+                        <li>Type a four digits number on the Play followed by a + sign (Ex .: 1234+) and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Pick 5 Straight</h4> 
+                    <ol> 
+                        <li>Type a five digits number on the Play followed by a - sign (Ex .: 12345-) and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Pick 5 Box</h4> 
+                    <ol> 
+                        <li>Type a five digits number on the Play followed by a + sign (Ex .: 12345+) and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                    <h4>To play a Super Palé</h4> 
+                    <ol> 
+                        <li>Type the a four digit number on the Play and press ENTER.</li> 
+                        <li>Type the amount and press ENTER.</li> 
+                    </ol> 
+                </div>
+                <div class="tab-pane container" id="keys">...</div>
+                {{-- <div class="tab-pane container" id="menu2">...</div> --}}
+            </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+  <!-- The Mark Modal -->
+  <div class="modal fade" id="mark_modal">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h2 class="modal-title">Mark as Paid</h2>
+              <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="code" style="color:black;">Code:</label>
+                    <input type="text" class="form-control" id="code">
+                    <em id="code-require-error" class="error invalid-feedback">Please enter your code</em>
+                    <em id="code-invalid-error" class="error invalid-feedback">Invalid code</em>
+                </div>
+                <div class="ticket_mark_result text-center">
+                    <input type="hidden" name="" id="temp_barcode">
+                    <h5>Ticket: <span></span></h5>
+                    <p>Legend</p>
+                    <ul>
+                        <li class="winning-play">Winner</li>
+                        <li class="losing-play">Loser</li>
+                        <li class="pending-play">Pending</li>
+                    </ul>
+                    <p>PLAYS(AMOUNT: <span class="amount"></span>)(PENDING PAYMENT:<span style="color:red;font-weight:bold;" class="pending_payment"></span>)(TOTAL PRIZE:<span class="pending_payment"></span>)</p>
+                    <table class="table table-borded mx-auto">
+                        <thead>
+                            <tr>
+                                <th>Play</th>
+                                <th>Play Type</th>
+                                <th>Amount</th>
+                                <th>Prize</th>
+                                <th>Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mark_result">
+                         
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Go Back</button>
+              <button type="button" class="btn btn-danger mark_submit">Mark as Paid</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- The Duplicate Modal -->
+  <div class="modal fade" id="duplicate_modal">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+          <div class="modal-content">
+          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h2 class="modal-title">Duplicate ticket</h2>
+              <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ticket_number" style="color:black;">Ticket Number:</label>
+                    <input type="text" class="form-control" id="ticket_number">
+                    <em id="ticket_number-require-error" class="error invalid-feedback">Please enter your code</em>
+                    <em id="ticket_number-invalid-error" class="error invalid-feedback">Invalid code</em>
+                </div>
+                <div class="duplicate_lottery">
+                    <input type="hidden" name="" id="temp_barcode2">
+                    <h4 class="text-center">Choose the lottery on the right side to move the plays from the lottery on the left</h4>
+                    <hr>
+                    <div class="duplicate_result text-center">
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Go Back</button>
+              <button type="button" class="btn btn-danger duplicate_submit">Load ticket duplicate</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
 @endsection
+
+<select class="form-control float-right w-50 display-none" id="lottery_clone">
+    <option>--Don't Move--</option>
+    <option>--Don't Copy--</option>
+    @isset($lottery)
+        @foreach ($lottery as $item)
+            <option value="{{$item->id}}" name="{{$item->abbrev}}">{{$item->name}}</option>
+        @endforeach
+    @endisset
+</select>
 {{-- Ticket create Print --}}
 <div class="wrap-print" style="display:none;">
         <div  id="ticket_result">
@@ -320,7 +523,7 @@
                 <div class="col-md-12">
                     <div class="logo-text text-center">
                         <h1 style="font-weight: bold;">Kaizer & Assoc</h1>
-                        <h1>**&nbsp;&nbsp; ORIGINAL &nbsp;&nbsp;**</h1>
+                        <h1 class="origin">**&nbsp;&nbsp; ORIGINAL &nbsp;&nbsp;**</h1>
                         <p></p>
                     </div>
                 </div>
@@ -339,11 +542,11 @@
                 </div>
                 <div class="col-md-12">
                     <div class="general-info text-center">
-                        <p>1st:$65(00-99):$60 2nd:$15</p>
-                        <p>3rd:$10 First Only and Pick2:$80</p>
-                        <p>Pale:$1,000 SuperPale:$2,000</p>
+                        <p>1st:$65(00-99):$65 2nd:$15</p>
+                        <p>3rd:$10, Pick2:$75</p>
+                        <p>Pale:$800, SuperPale:$2,000</p>
                         <p>Cash3:$700(000-999:$500)</p>
-                        <p>Play4:$4,000 Pick5:$40,000</p>
+                        <p>Play4:$4,000 Pick5:$30,000</p>
                         <p>Kole3:$10,000</p>
                         <p>NO TICKET NO MONEY . WE DON'T P A Y</p>
                         <p>DOUBLE P ALE.</p>
@@ -412,11 +615,11 @@
                 </div>
                 <div class="col-md-12">
                     <div class="general-info text-center">
-                        <p>1st:$65(00-99):$60 2nd:$15</p>
-                        <p>3rd:$10 First Only and Pick2:$80</p>
-                        <p>Pale:$1,000 SuperPale:$2,000</p>
+                        <p>1st:$65(00-99):$65 2nd:$15</p>
+                        <p>3rd:$10, Pick2:$75</p>
+                        <p>Pale:$800, SuperPale:$2,000</p>
                         <p>Cash3:$700(000-999:$500)</p>
-                        <p>Play4:$4,000 Pick5:$40,000</p>
+                        <p>Play4:$4,000 Pick5:$30,000</p>
                         <p>Kole3:$10,000</p>
                         <p>NO TICKET NO MONEY . WE DON'T P A Y</p>
                         <p>DOUBLE P ALE.</p>
@@ -454,8 +657,12 @@
 <script src="{{asset('js/print.js')}}"></script>
     <script>
         $(document).ready(function(){
-            $('#winning_number').click(function(){
+            $('.winning_number').click(function(){
                 $("#win_modal").modal();
+            })
+
+            $('#help').click(function(){
+                $("#help_modal").modal();
             })
 
             $('#print_win').click(function(){

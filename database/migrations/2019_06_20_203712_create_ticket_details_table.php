@@ -18,9 +18,10 @@ class CreateTicketDetailsTable extends Migration
             $table->integer('ticket_id');
             $table->integer('game_id');
             $table->integer('lottery_id');
-            // $table->integer('price_id');
+            $table->integer('is_win')->default(0);
             $table->string('number');
             $table->integer('amount');
+            $table->integer('prize')->default(0);
             $table->timestamps();
         });
     }

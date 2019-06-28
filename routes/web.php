@@ -48,6 +48,10 @@ Route::get('check-avail','HomeController@check_avail')->name('check_avail');
 Route::get('create-ticket','HomeController@create_ticket')->name('create_ticket');
 Route::get('delete-ticket','HomeController@delete_ticket')->name('delete_ticket');
 Route::get('summary','HomeController@summary')->name('summary');
+Route::get('manage-ticket','HomeController@manage_ticket')->name('manage_ticket');
+Route::post('search-ticket','HomeController@search_ticket')->name('search_ticket');
+Route::get('ticket-mark','HomeController@ticket_mark')->name('ticket_mark');
+Route::get('duplicate','HomeController@duplicate')->name('duplicate');
 
 
 

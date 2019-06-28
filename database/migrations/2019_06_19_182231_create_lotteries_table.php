@@ -17,6 +17,7 @@ class CreateLotteriesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->nullable();
             $table->string('abbrev')->nullable();
+            $table->time('limit_time')->nullable();
             $table->timestamps();
         });
     }

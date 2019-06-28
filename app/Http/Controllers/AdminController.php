@@ -8,6 +8,8 @@ use App\Models\Lottery;
 use App\Models\WinNumber;
 use App\Models\Game;
 use App\Models\Price;
+use App\Models\TicketDetail;
+use App\Models\Ticket;
 use Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -199,13 +201,14 @@ class AdminController extends Controller
 
     public function win_number()
     {
+        $lottery = Lottery::get();
         if(WinNumber::get()->isNotEmpty()){
             $date = WinNumber::latest('date')->first()->date;
             $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
-            $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
-            return view('admin.winnumber',compact('win_data','date_array'));
+            $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get();
+            return view('admin.winnumber',compact('win_data','date_array','lottery'));
         }else{
-            return view('admin.winnumber');
+            return view('admin.winnumber',compact('lottery'));
         }
         
     }
@@ -231,10 +234,58 @@ class AdminController extends Controller
                 'value' => $value,
                 'lottery_id' => $lottery_id,
             ]);
+            $win_number = explode(",", $value);
+            $tickets = Ticket::whereDate('created_at', $date)->get();
+            if($tickets->isNotEmpty()){
+                foreach ($tickets as $ticket) {
+                    foreach ($ticket->details as $detail) {
+                        if($detail->lottery_id == $lottery_id){
+                            $detail_number = preg_replace('/[^0-9]/', '', $detail->number);
+                            if(in_array($detail_number, $win_number)){
+                                $detail->is_win = 1;
+                                foreach ($win_number as $key => $value) {
+                                    if($value == $detail_number){
+                                        $key_value = $key;
+                                    }
+                                }
+                                $detail->prize = $this->prize_caculate($detail->game_id,$key_value, $detail->amount,$detail->lottery_id);
+                                $detail->save();
+                                if($ticket->is_pending == 0){
+                                    $ticket->is_pending = 1;
+                                    $ticket->save();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
             if($i == $length-1){
                 return 1;
             }
         }
+    }
+
+    public function prize_caculate($game_id, $key_value, $amount, $lottery_id)
+    {
+        $lottery_name = Lottery::find($lottery_id)->name;
+        $lottery_abbrev = Lottery::find($lottery_id)->abbrev;
+        if($lottery_name == 'FL Pick2 AM' || $lottery_name == 'FL Pick2 PM' || $lottery_abbrev == 'P2AM' || $lottery_abbrev == 'P2PM'){
+            if($game_id == 1){
+                
+                return (int)$amount * 80;
+            }else{
+                return 0;
+            }
+        }
+        $game_price = Game::find($game_id)->price;
+        if($game_id == 1){
+            $game_price = explode(",",$game_price);
+            return (int)$amount * (int)$game_price[$key_value];
+        }else{
+            return (int)$amount * (int)$game_price;
+        }
+        
     }
 
     public function win_search(Request $request)
@@ -251,7 +302,7 @@ class AdminController extends Controller
         $lottery = Lottery::get();
         if(!Price::get()->isEmpty()){
             $date = Price::latest('date')->first()->date;
-            $price_data = Price::whereDate('date', $date)->orderBy('lottery_id','desc')->orderBy('game_id','asc')->get();
+            $price_data = Price::whereDate('date', $date)->orderBy('lottery_id','asc')->orderBy('game_id','asc')->get();
             return view('admin.avail_amount',compact('price_data','game','lottery','date'));
         }
         return view('admin.avail_amount',compact('game','lottery'));

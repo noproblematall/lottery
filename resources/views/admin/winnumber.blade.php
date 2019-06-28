@@ -141,66 +141,16 @@
                             <em id="date-require-error" class="error invalid-feedback">Please enter date</em>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="name">NY AM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="1" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">FL AM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="2" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">GAMS:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="3" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">GA AM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="4" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">P2AM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="5" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">NY PM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="6" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">LN:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="7" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">FL PM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="8" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">GA PM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="9" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">P2PM:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="text" class="form-control" id="10" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
+                    @isset($lottery)
+                        @foreach ($lottery as $item)
+                            <div class="form-group">
+                                <label for="name">{{$item->abbrev}}:&nbsp;&nbsp;</span></label>
+                                <div class="float-right">
+                                    <input type="text" class="form-control" id="{{$item->id}}" user_id="" name="" required autocomplete="off"/>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endisset
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -212,7 +162,7 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"></script>
+<script src="{{asset('js/datepicker.min.js')}}"></script>
     <script>
         $(document).ready(function(){
 

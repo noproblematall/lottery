@@ -6,6 +6,9 @@ body {
 .display-none {
     display: none;
 }
+.display-show {
+    display: block;
+}
 @media (min-width: 1200px){
     .custom_container {
         max-width: 1500px;
@@ -154,4 +157,29 @@ hr {
         margin-top:2px;
     }
     
+}
+
+
+.ticket_mark_result ul{
+    list-style: none;
+    padding:0;
+    
+}
+.ticket_mark_result ul li{
+    display:inline-block;
+}
+.winning-play{
+    background-color: #99DDFF;
+}
+.losing-play{
+    background-color: #FFCCCC;
+}
+.pending-play{
+    background-color: #DDD;
+}
+.ticket_mark_result table{
+    margin:0;
+}
+.ticket_mark_result tr td{
+    padding: 0;
 }

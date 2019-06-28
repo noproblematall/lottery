@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Lottery extends Model
 {
     protected $fillable = [
-        'name',
+        'name','abbrev','limit_time'
     ];
 
     public function win_numbers()

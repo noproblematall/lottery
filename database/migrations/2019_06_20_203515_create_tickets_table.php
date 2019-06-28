@@ -17,6 +17,7 @@ class CreateTicketsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->string('bar_code');
+            $table->integer('is_pending')->default(0);
             $table->timestamps();
         });
         DB::statement("ALTER TABLE tickets AUTO_INCREMENT = 100000;");
