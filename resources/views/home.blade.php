@@ -13,7 +13,7 @@
 @endsection
 @section('content')
 <span class="name" style="display:none;">{{Auth::user()->name}}</span>
-
+<span id="time" style="display:none;">{{$time}}</span>
 <div class="float-left">
     <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-primary winning_number"> NUMEROS GANADORES </button>
@@ -36,16 +36,6 @@
                     <li id="{{$item->id}}" time="{{$item->limit_time}}" name="{{$item->abbrev}}">{{$item->name}}</li>
                 @endforeach
             @endisset
-            {{-- <li>New York AM</li>
-            <li>Florida AM</li>
-            <li>Gana Mas</li>
-            <li>Georgia AM</li>
-            <li>FL Pick2 AM</li>
-            <li>New York PM</li>
-            <li>Loteria Nacional</li>
-            <li>Florida PM</li>
-            <li>Georgia Evening PM</li>
-            <li>FL Pick2 PM</li> --}}
         </ul>
     </div>
     <div class="container">
@@ -53,19 +43,19 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <input type="text" class="form-control" id="myplay1" name="play" placeholder="Play"/>
-                    <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                    {{-- <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em> --}}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <input type="text" class="form-control" id="avalable" name="avalable" placeholder="" readonly/>
-                    <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                    {{-- <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em> --}}
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <input type="text" class="form-control" id="myplay2" name="amount" placeholder="Amount"/>
-                    <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                    {{-- <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em> --}}
                 </div>
             </div>
         </div>
@@ -91,17 +81,38 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="form-group">
-                    <label for="usr">Total Play:</label>
-                    <input type="text" class="form-control" id="total_play" name="total_play" placeholder="" readonly/>
-                    <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="usr">Total Play:</label>
+                            <input type="text" class="form-control" id="total_play" name="total_play" placeholder="" readonly/>
+                            <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="usr">Total Amount:</label>
+                            <input type="text" class="form-control" id="total_amount" name="total_amount" placeholder="" readonly/>
+                            <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
-            <div class="col-md-4">
-                <label for="usr">Total Amount:</label>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="total_amount" name="total_amount" placeholder="" readonly/>
-                    <em id="email-type-error" class="error invalid-feedback">Please enter your correct email</em>
+            <div class="col-md-4">                
+                <div class="row" style="margin-top:40px;">
+                    <div class="col-md-6">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="multi_select">
+                            <label class="custom-control-label multi_select" style="cursor:pointer" for="multi_select">Multi Select</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="sms">
+                            <label class="custom-control-label sms" style="cursor:pointer" for="sms">SMS</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

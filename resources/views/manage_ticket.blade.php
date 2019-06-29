@@ -105,11 +105,11 @@
                                         }
                                     ?>
                                     <?php
-                                        if($date != date('Y-m-d') && $ticket->details()->where('is_win',1)){
+                                        if($date != date('Y-m-d') && ($ticket->is_pending == 1 || $ticket->is_pending == 2)){
                                     ?>
                                     <td>Winner</td>
                                     <?php
-                                        }elseif ($date != date('Y-m-d') && $ticket->details()->where('is_win',0)) {
+                                        }elseif ($date != date('Y-m-d') && $ticket->is_pending == 0) {
                                     
                                     ?>
                                     <td>Losser</td>

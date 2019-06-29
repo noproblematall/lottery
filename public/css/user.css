@@ -26,6 +26,10 @@ ul.lottery li{
     padding:5px;
     font-weight: bold;
     border:2px solid green;
+    opacity: 0.4;
+}
+ul.lottery li.lottery_disable:hover{
+    cursor: not-allowed;
 }
 ul.lottery li:hover{
     opacity:1;
@@ -33,11 +37,13 @@ ul.lottery li:hover{
     cursor: pointer;
 }
 .lottery_active{
-    opacity:1;
+    opacity:1 !important;
     box-shadow: 0 0 8px white;
 }
 .lottery_disable{
-    opacity: 0.4;
+    opacity: 0.4 !important;
+    background-color: #929292 !important;
+    cursor: not-allowed;
 }
 #footer ul {
     padding: 0;

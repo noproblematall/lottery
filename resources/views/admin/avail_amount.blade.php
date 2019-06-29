@@ -125,13 +125,18 @@
                         </div>
                         
                     </div>
-                    <div class="form-group">
-                        <label for="name">Directo:&nbsp;&nbsp;</span></label>
-                        <div class="float-right">
-                            <input type="number" class="form-control" min="0" id="1" user_id="" name="" required autocomplete="off"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
+                    @isset($game)
+                        @foreach ($game as $item)
+                            <div class="form-group">
+                                <label for="name">{{$item->name}}:&nbsp;&nbsp;</span></label>
+                                <div class="float-right">
+                                    <input type="number" class="form-control" min="0" id="{{$item->id}}" user_id="" name="" required autocomplete="off"/>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endisset
+                    
+                    {{-- <div class="form-group">
                         <label for="name">Pale:&nbsp;&nbsp;</span></label>
                         <div class="float-right">
                             <input type="number" class="form-control" id="2" min="0" user_id="" name="" required autocomplete="off"/>
@@ -172,7 +177,7 @@
                         <div class="float-right">
                             <input type="number" class="form-control" id="8" min="0" user_id="" name="" required autocomplete="off"/>
                         </div>
-                    </div>                    
+                    </div>                     --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

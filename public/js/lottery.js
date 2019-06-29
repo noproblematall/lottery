@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var lottery_id = 1;
+    var lottery_id = [];
     var avail_amount = 0;
     var game_id = 1;
     var amount = 0;
@@ -7,15 +7,95 @@ $(document).ready(function () {
     var filter_play;
     var total_play = 0;
     var total_amount = 0;
+    var current_time_compare = '';
+    var multi_select = false;
+    var sms = false;
+    var regex = /([0-9])\1{2,}/;
+    // time schedule -------------------------
+    
+    function schedule(){
+        $('.lottery li').each(function(){
+            let lottery_time = $(this).attr('time');
+            if(current_time_compare > lottery_time){
+                $(this).removeClass('lottery_active');
+                $(this).addClass('lottery_disable');
+            }else{
+                $(this).removeClass('lottery_disable');
+            }
+        })
+    }
+
+    var myVar = setInterval(function() {
+        myTimer();
+    }, 1000);
+      
+    function myTimer() {
+        current_time = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
+        var d = new Date(current_time);
+        document.getElementById("clock").innerHTML = d.toLocaleTimeString();
+        let currentHours = d.getHours();
+        let currentMinutes = d.getMinutes();
+        let currentSeconds = d.getSeconds();
+        currentHours = (currentHours < 10 ? "0" : "") + currentHours;
+        currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
+        currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
+        current_time_compare = currentHours + ':' + currentMinutes + ':' + currentSeconds;
+        // schedule();
+    }
 
     $('#myplay1').focus();
+    var flag = [];
+    for (let i = 1; i <= $('.lottery li').length; i++) {
+        flag[i] = false;
+    }
 
-    $('.lottery li').addClass('lottery_disable');
-    $('.lottery li:first').removeClass('lottery_disable').addClass('lottery_active');
-    $('.lottery li').click(function () {
-        $('.lottery li').removeClass('lottery_active').addClass('lottery_disable');
-        $(this).removeClass('lottery_disable').addClass('lottery_active');
+    $('.lottery li').click(function () {        
+        if($(this).hasClass('lottery_disable')){
+            return false;
+        }else{
+            if(!multi_select){
+                lottery_id.length = 0;
+                let id = Number($(this).attr('id'));
+                lottery_id.push(id);
+                $('.lottery li').removeClass('lottery_active');
+                $(this).addClass('lottery_active');
+            }else{
+                let id = Number($(this).attr('id'));
+                flag[id] = !flag[id];
+                lottery_id.length = 0;
+                for (let i = 1; i <= $('.lottery li').length; i++) {
+                    if(flag[i] == true){
+                        lottery_id.push(i);
+                    }
+                }
+                console.log(flag);
+                if(flag[id]){
+                    $(this).addClass('lottery_active');
+                }else{
+                    $(this).removeClass('lottery_active');
+                }
+            }
+            
+        }
+        
     })
+
+    // Multi-select -------------
+    $(document).on('click','.multi_select', function (){
+        multi_select = $('#multi_select').prop('checked');
+        multi_select = !multi_select;
+        $('.lottery li').removeClass('lottery_active');
+        for (let i = 1; i <= $('.lottery li').length; i++) {
+            flag[i] = false;
+        }
+    })
+    // SMS -----------------
+    $(document).on('click','.sms', function (){
+        sms = $('#sms').prop('checked');
+        sms = !sms;
+        console.log(sms)
+    })
+
 
     $('[id^=myplay]').keypress(validateNumber);
 
@@ -32,115 +112,149 @@ $(document).ready(function () {
                 $('#myplay2').attr('readonly', 'readonly');
                 $('#myplay2').focus();
             }
-
         }
     })
 
 
     $('#myplay2').focusin(function () {
 
-        $('.lottery li').each(function () {
-            if ($(this).hasClass('lottery_active')) {
-                lottery_id = $(this).attr('id');
-            }
-        })
+        // $('.lottery li').each(function () {
+        //     if ($(this).hasClass('lottery_active')) {
+        //         lottery_id = $(this).attr('id');
+        //         console.log(lottery_id)
+        //     }
+        // })
+        if(lottery_id.length == 0){
+            $('#warning').find('span').text('please select lottery.');
+            $('#warning').removeClass('display-none');
+            $(this).focusout();
+            $('#myplay1').focus();
+            setTimeout(function () {
+                $('#warning').addClass('display-none');
+            }, 2000);
+            return false;
+        }
         play = $('#myplay1').val();
         if (play.length <= 0 || !play) {
             $('#myplay1').focus();
             return false;
         }
-       let lottery_name =  $('.lottery li[id=' + lottery_id + ']').text();
-       let lottery_abbrev = $('.lottery li[id=' + lottery_id + ']').attr('name');
-       if(lottery_name == "FL Pick2 AM" || lottery_abbrev == "P2AM" || lottery_name == "FL Pick2 PM" || lottery_abbrev == "P2PM"){
-           if(play.length != 2){
-                $('#warning').find('span').text('Invaild Play1');
-                $('#warning').removeClass('display-none');
-                $(this).focusout();
-                $('#myplay1').focus();
-                setTimeout(function () {
-                    $('#warning').addClass('display-none');
-                }, 2000);
-                return false;
-           }
-       }
-        if (play.indexOf('+') >= 0 || play.indexOf('-') >= 0) {
-            if (play.indexOf('+') == 4) {
-                game_id = 7;
-                filter_play = play.substr(0, 4);
-                play = filter_play + 'B';
 
-                check_avail(lottery_id, game_id, filter_play);
-                return
+        if(!multi_select){
+            let lottery_name =  $('.lottery li[id=' + lottery_id[0] + ']').text();
+            console.log(lottery_name)
+            let lottery_abbrev = $('.lottery li[id=' + lottery_id[0] + ']').attr('name');
+            if(lottery_name == "FL Pick2 AM" || lottery_abbrev == "P2AM" || lottery_name == "FL Pick2 PM" || lottery_abbrev == "P2PM"){
+                if(play.length != 2){
+                        $('#warning').find('span').text('Invaild Play1');
+                        $('#warning').removeClass('display-none');
+                        $(this).focusout();
+                        $('#myplay1').focus();
+                        setTimeout(function () {
+                            $('#warning').addClass('display-none');
+                        }, 2000);
+                        return false;
+                }
             }
-            if (play.indexOf('+') == 3) {
-                game_id = 5;
-                filter_play = play.substr(0, 3);
-                play = filter_play + 'B';
-                console.log(filter_play);
-                console.log(play);
-                check_avail(lottery_id, game_id, filter_play);
-                return
-            }
-            if (play.indexOf('-') == 4) {
-                game_id = 6;
-                filter_play = play.substr(0, 4);
-                play = filter_play + 'S';
-                check_avail(lottery_id, game_id, filter_play);
-                return
-            } else {
-                $('#warning').find('span').text('Invaild Play');
-                $('#warning').removeClass('display-none');
-                $(this).focusout();
-                $('#myplay1').focus();
-                console.log(234)
+            if (play.indexOf('+') >= 0 || play.indexOf('-') >= 0) {
+                if(play.indexOf('+') == 5){
+                    game_id = 9;
+                    filter_play = play.substr(0,5);
+                    play = filter_play + 'B';
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.indexOf('+') == 4) {
+                    game_id = 7;
+                    filter_play = play.substr(0, 4);
+                    play = filter_play + 'B';
 
-                setTimeout(function () {
-                    $('#warning').addClass('display-none');
-                }, 2000);
-                // return false;
-            }
-        } else {
-            if (play.length == 2) {
-                game_id = 1;
-                filter_play = play;
-                check_avail(lottery_id, game_id, filter_play);
-                return
-            }
-            if (play.length == 3) {
-                game_id = 4;
-                filter_play = play;
-                play = filter_play + 'S';
-                check_avail(lottery_id, game_id, filter_play);
-                return
-            }
-            if (play.length == 4) {
-                game_id = 2;
-                let x = play.substr(0, 2);
-                let y = play.substr(2, 3);
-                filter_play = play;
-                play = x + '-' + y;
-                check_avail(lottery_id, game_id, filter_play);
-                return
-            }
-            if (play.length == 6) {
-                game_id = 3;
-                let x = play.substr(0, 2);
-                let y = play.substr(2, 2);
-                let z = play.substr(4, 2);
-                filter_play = play;
-                play = x + '-' + y + '-' + z;
-                console.log(play)
-                check_avail(lottery_id, game_id, filter_play);
-                return
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.indexOf('+') == 3) {
+                    if(regex.test(play)){
+                        game_id = 4;
+                        filter_play = play.substr(0, 3);
+                        play = filter_play + 'S';
+                        check_avail(lottery_id[0], game_id, filter_play);
+                        return
+                    }else{
+                        game_id = 5;
+                        filter_play = play.substr(0, 3);
+                        play = filter_play + 'B';                    
+                        check_avail(lottery_id[0], game_id, filter_play);
+                        return
+                    }
+                    
+                }
+                if(play.indexOf('-') == 5){
+                    game_id = 8;
+                    filter_play = play.substr(0,5);
+                    play = filter_play + 'S';
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.indexOf('-') == 4) {
+                    game_id = 6;
+                    filter_play = play.substr(0, 4);
+                    play = filter_play + 'S';
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                } else {
+                    $('#warning').find('span').text('Invaild Play');
+                    $('#warning').removeClass('display-none');
+                    $(this).focusout();
+                    $('#myplay1').focus();
+
+                    setTimeout(function () {
+                        $('#warning').addClass('display-none');
+                    }, 2000);
+                    // return false;
+                }
             } else {
-                $('#warning').find('span').text('Invaild Play1');
-                $('#warning').removeClass('display-none');
-                $(this).focusout();
-                $('#myplay1').focus();
-                setTimeout(function () {
-                    $('#warning').addClass('display-none');
-                }, 2000);
-                // return false;
+                if (play.length == 2) {
+                    game_id = 1;
+                    filter_play = play;
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.length == 3) {
+                    game_id = 4;
+                    filter_play = play;
+                    play = filter_play + 'S';
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.length == 4) {
+                    game_id = 2;
+                    let x = play.substr(0, 2);
+                    let y = play.substr(2, 3);
+                    filter_play = play;
+                    play = x + '-' + y;
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                }
+                if (play.length == 6) {
+                    game_id = 3;
+                    let x = play.substr(0, 2);
+                    let y = play.substr(2, 2);
+                    let z = play.substr(4, 2);
+                    filter_play = play;
+                    play = x + '-' + y + '-' + z;
+                    console.log(play)
+                    check_avail(lottery_id[0], game_id, filter_play);
+                    return
+                } else {
+                    $('#warning').find('span').text('Invaild Play1');
+                    $('#warning').removeClass('display-none');
+                    $(this).focusout();
+                    $('#myplay1').focus();
+                    setTimeout(function () {
+                        $('#warning').addClass('display-none');
+                    }, 2000);
+                    // return false;
+                }
             }
         }
 
@@ -149,61 +263,69 @@ $(document).ready(function () {
     $('body').on('keyup', '#myplay2', function (e) {
         if (e.keyCode == 13) {
             e.preventDefault();
-            avail_amount = Number($('#avalable').val());
-            if (!avail_amount) {
-                $('#myplay1').select();
-                return
-            }
-            amount = Number($(this).val());
-            $(this).val('');
-            $('#avalable').val('');
-            if (!amount) {
-                $(this).focus();
-                return false
-            }
-            if (amount > avail_amount) {
-                $('#warning').find('span').text('Invaild Input');
-                $('#warning').removeClass('display-none');
-                setTimeout(function () {
-                    $('#warning').addClass('display-none');
-                }, 2000);
-                $('#myplay2').focus();
-            } else {
-                let lottery_name = $('#' + lottery_id).attr('name');
-                let html = `<tr>
-                                <td name="${lottery_id}">${lottery_name}</td>
-                                <td name="${game_id}">${play}</td>
-                                <td name="${play}">${amount}</td>
-                                <td name="${amount}"><i class='fa fa-trash remove_this' style="color:red;"></i></td>
-                            </tr>`
-                total_play += 1;
-                total_amount += Number(amount);
-                $('#total_play').val(total_play);
-                $('#total_amount').val(total_amount);
-                if (game_id == 1) {
-                    $('#playsTableBodyDirecto').prepend(html);
-                    let sub_total = $('.table_total1 ').text();
-                    sub_total = Number(sub_total) + Number(amount);
-                    $('.table_total1').text(sub_total);
-                } else if (game_id == 2 || game_id == 3) {
-                    $('#playsTableBodyPale').prepend(html);
-                    let sub_total = $('.table_total2').text();
-                    sub_total = Number(sub_total) + Number(amount);
-                    $('.table_total2').text(sub_total);
-                } else if (game_id == 4 || game_id == 5) {
-                    $('#playsTableBodyCash').prepend(html);
-                    let sub_total = $('.table_total3').text();
-                    sub_total = Number(sub_total) + Number(amount);
-                    $('.table_total3').text(sub_total);
-                } else if (game_id == 6 || game_id == 7) {
-                    $('#playsTableBodyPick').prepend(html);
-                    let sub_total = $('.table_total4').text();
-                    sub_total = Number(sub_total) + Number(amount);
-                    $('.table_total4').text(sub_total);
-                }
 
-                $('#myplay1').val('');
-                $('#myplay1').focus();
+            if(!multi_select){
+                avail_amount = Number($('#avalable').val());
+                if (!avail_amount) {
+                    $('#myplay1').select();
+                    return
+                }
+                amount = Number($(this).val());
+                $(this).val('');
+                $('#avalable').val('');
+                if (!amount) {
+                    $(this).focus();
+                    return false
+                }
+                if (amount > avail_amount) {
+                    $('#warning').find('span').text('Invaild Input');
+                    $('#warning').removeClass('display-none');
+                    setTimeout(function () {
+                        $('#warning').addClass('display-none');
+                    }, 2000);
+                    $('#myplay2').focus();
+                } else {
+                    let lottery_name = $('#' + lottery_id[0]).attr('name');
+                    let html = `<tr>
+                                    <td name="${lottery_id[0]}">${lottery_name}</td>
+                                    <td name="${game_id}">${play}</td>
+                                    <td name="${play}">${amount}</td>
+                                    <td name="${amount}"><i class='fa fa-trash remove_this' style="color:red;"></i></td>
+                                </tr>`
+                    total_play += 1;
+                    total_amount += Number(amount);
+                    $('#total_play').val(total_play);
+                    $('#total_amount').val(total_amount);
+                    if (game_id == 1) {
+                        $('#playsTableBodyDirecto').prepend(html);
+                        let sub_total = $('.table_total1 ').text();
+                        sub_total = Number(sub_total) + Number(amount);
+                        $('.table_total1').text(sub_total);
+                    } else if (game_id == 2 || game_id == 3) {
+                        $('#playsTableBodyPale').prepend(html);
+                        let sub_total = $('.table_total2').text();
+                        sub_total = Number(sub_total) + Number(amount);
+                        $('.table_total2').text(sub_total);
+                    } else if (game_id == 4 || game_id == 5) {
+                        $('#playsTableBodyCash').prepend(html);
+                        let sub_total = $('.table_total3').text();
+                        sub_total = Number(sub_total) + Number(amount);
+                        $('.table_total3').text(sub_total);
+                    } else if (game_id == 6 || game_id == 7) {
+                        $('#playsTableBodyPick').prepend(html);
+                        let sub_total = $('.table_total4').text();
+                        sub_total = Number(sub_total) + Number(amount);
+                        $('.table_total4').text(sub_total);
+                    }else if (game_id == 8 || game_id == 9) {
+                        $('#playsTableBodyPick').prepend(html);
+                        let sub_total = $('.table_total4').text();
+                        sub_total = Number(sub_total) + Number(amount);
+                        $('.table_total4').text(sub_total);
+                    }
+
+                    $('#myplay1').val('');
+                    $('#myplay1').focus();
+                }
             }
         }
     })
@@ -351,17 +473,6 @@ $(document).ready(function () {
             })
         }
     })
-
-
-    var myVar = setInterval(function() {
-        myTimer();
-      }, 1000);
-      
-    function myTimer() {
-        var aestTime = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
-        var d = new Date(aestTime);
-        document.getElementById("clock").innerHTML = d.toLocaleTimeString();
-    }
 
     $('#mark_modal .ticket_mark_result').addClass('display-none');
 

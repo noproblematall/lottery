@@ -38,23 +38,24 @@ class HomeController extends Controller
         $balance = Auth::user()->balance;
         $lottery = Lottery::get();
         $today = date('Y-m-d');
-        
+        // $time = date('m/d/Y h:i:s A');
+        $time = time();
         if(WinNumber::get()->isNotEmpty()){
             $date = WinNumber::latest('date')->first()->date;
             $date_array = WinNumber::distinct()->orderBy('date','desc')->limit(3)->pluck('date')->toArray();
             $win_data = WinNumber::whereDate('date', $date)->orderBy('lottery_id')->get()->load('lottery');
             if(Ticket::where('user_id',$user_id)->whereDate('created_at',$today)->get()->isNotEmpty()){
                 $tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$today)->get();
-                return view('home',compact('win_data','date','lottery','tickets','balance'));
+                return view('home',compact('win_data','date','lottery','tickets','balance','time'));
             }else{
-                return view('home',compact('win_data','date','lottery','balance'));
+                return view('home',compact('win_data','date','lottery','balance','time'));
             }            
         }else{
             if(Ticket::where('user_id',$user_id)){
-                $tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$date)->get();
-                return view('home',compact('lottery','tickets','balance'));
+                $tickets = Ticket::where('user_id',$user_id)->whereDate('created_at',$today)->get();
+                return view('home',compact('lottery','tickets','balance','time'));
             }else{
-                return view('home',compact('lottery','balance'));
+                return view('home',compact('lottery','balance','time'));
             }
         }
     }
@@ -260,6 +261,12 @@ class HomeController extends Controller
                 if($temp->first()->is_pending == 1){
                     $temp->update([
                         'is_pending' => 2,
+                    ]);
+                    $prize = $temp->first()->details()->where('is_win',1)->sum('prize');
+                    $balance = Auth::user()->balance;
+                    $balance = $balance - $prize;
+                    User::find($user_id)->update([
+                        'balance' => $balance,
                     ]);
                     return 'ok';
                 }else{
