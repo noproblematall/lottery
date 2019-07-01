@@ -68,10 +68,10 @@ class HomeController extends Controller
         $play = $request->get('play');
         $date = date('Y-m-d');
         // $date = date('2019-6-23');
-        if(Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->get()->isEmpty()){
+        if(Price::where([['lottery_id',$lottery_id],['game_id',$game_id]])->latest('date')->get()->isEmpty()){
             return 'fail';
         }
-        $price = Price::where([['date',$date],['lottery_id',$lottery_id],['game_id',$game_id]])->first()->price;
+        $price = Price::where([['lottery_id',$lottery_id],['game_id',$game_id]])->latest('date')->first()->price;
         if($price != NULL){
             $tickets = Ticket::whereDate('created_at', $date)->where('user_id',$user_id)->get();
             
@@ -80,8 +80,7 @@ class HomeController extends Controller
                     $ticket_details = TicketDetail::where([['ticket_id',$ticket->id],['lottery_id',$lottery_id]])->get();
                     foreach ($ticket_details as $detail) {
                         if($detail->number == $play){
-                            $avail = $price - ($detail->amount);
-                            return $avail;
+                            $price = $price - ($detail->amount);                            
                         }
                     }
                 }
@@ -97,6 +96,41 @@ class HomeController extends Controller
             ];
             return response()->json($errors);
         }
+    }
+
+    public function check_avail_multi(Request $request)
+    {
+        $price_array = array();
+        $lottery_id = array();
+        $user_id = Auth::user()->id;
+        $lottery_id_string = $request->get('lottery_id');
+        $lottery_id = explode(',',$lottery_id_string);
+        $game_id = $request->get('game_id');
+        $play = $request->get('play');
+        $date = date('Y-m-d');
+        foreach ($lottery_id as $value) {
+            if (Price::where([['lottery_id',$value],['game_id',$game_id]])->latest('date')->get()->isEmpty()) {
+                return 'fail';
+            }
+            $price = Price::where([['lottery_id',$value],['game_id',$game_id]])->latest('date')->first()->price;
+            $avail = $price;
+            $tickets = Ticket::whereDate('created_at', $date)->where('user_id',$user_id)->get();
+            if($tickets->isnotEmpty()){
+                foreach ($tickets as $ticket) {
+                    $ticket_details = TicketDetail::where([['ticket_id',$ticket->id],['lottery_id',$value]])->get();
+                    foreach ($ticket_details as $detail) {
+                        if($detail->number == $play){
+                            $avail = $avail - ($detail->amount);
+                        }
+                    }
+                }
+                array_push($price_array,$avail);
+            }else{
+                array_push($price_array,$avail);
+            }
+        }
+        return min($price_array);
+
     }
 
     public function create_ticket(Request $request)

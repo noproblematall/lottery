@@ -664,7 +664,7 @@
     </div>
 
 @section('script')
-<script src="{{ asset('js/lottery.js') }}"></script>
+<script src="{{ asset('js/lottery.min.js') }}"></script>
 <script src="{{asset('js/print.js')}}"></script>
     <script>
         $(document).ready(function(){

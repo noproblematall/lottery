@@ -368,7 +368,7 @@
 
 @section('script')
 <script src="{{asset('js/print.js')}}"></script>
-<script src="{{asset('js/manage_ticket.js')}}"></script>
+<script src="{{asset('js/manage_ticket.min.js')}}"></script>
 <script src="{{asset('js/datepicker.min.js')}}"></script>
 <script>
     $('#search_date').datepicker({
