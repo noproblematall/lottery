@@ -315,15 +315,7 @@ $(document).ready(function () {
                 }                
             }
             if (play.indexOf('+') >= 0 || play.indexOf('-') >= 0 || play.indexOf('.') >= 0){
-                // if(play.indexOf('.') == 2){
-                //     game_id = 1;
-                //     play = play.substr(0,2)
-                //     play_array = dot_check(play);
-                //     $('#avalable').val('X');
-                //     $('#myplay2').removeAttr('readonly');
-                //     $('#myplay2').select();
-                //     return
-                // }
+                
                 if(play.indexOf('.') == 4){
                     game_id = 2;
                     play = play.substr(0,4)
